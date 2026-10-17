@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: lobby — back pill, big comic title with joke, grid of table/machine cards (3 across for slots, 2 for tables, 1 on phones). */
 :root {
@@ -64,6 +64,8 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 .missing { text-align: center; font-size: 18px; font-weight: 600; }
 @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } .preview { height: 110px; } }
 @media (prefers-reduced-motion: reduce) { body, .card:hover .preview svg { animation: none !important; } }
+html:lang(vi) { --display: "Baloo 2", "Fredoka", system-ui, sans-serif; --body: "Baloo 2", system-ui, sans-serif; }
+html:lang(vi) h1, html:lang(vi) h2 { font-weight: 800; }
 </style>
 </head>
 <body data-page="lobby">
@@ -83,7 +85,8 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
   const GAMES = {
     slots: { title: 't_slots', sub: 'lob_slots_sub', page: 'slots.html', param: 'm', cols: 3, sit: 'lob_spin' },
     baccarat: { title: 't_bac', sub: 'lob_bac_sub', page: 'baccarat.html', param: 't', cols: 2, sit: 'lob_sit' },
-    blackjack: { title: 't_bj', sub: 'lob_bj_sub', page: 'blackjack.html', param: 't', cols: 2, sit: 'lob_sit' }
+    blackjack: { title: 't_bj', sub: 'lob_bj_sub', page: 'blackjack.html', param: 't', cols: 2, sit: 'lob_sit' },
+    poker: { title: 't_pk', sub: 'lob_pk_sub', page: 'poker.html', param: 't', cols: 2, sit: 'lob_sit' }
   };
   const G = GAMES[g];
   const grid = document.getElementById('grid');
@@ -98,7 +101,7 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
   document.getElementById('sub').textContent = LB.t(G.sub);
   grid.style.setProperty('--cols', G.cols);
 
-  const bankKey = { baccarat: 'bac_credits', blackjack: 'bj_credits' }[g];
+  const bankKey = { baccarat: 'bac_credits', blackjack: 'bj_credits', poker: 'pk_credits' }[g];
   if (bankKey) document.getElementById('bank').innerHTML = `${LB.t('lob_chips')} <b>${Math.round(LB.get(bankKey, 1000)).toLocaleString()}</b>`;
 
   // ---------- slot previews: each machine shows its own mix of symbols ----------
@@ -188,13 +191,37 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
     return s + '</svg>';
   }
 
+  function pokerTable(t) {
+    const u = 'p' + t.id;
+    const seatPos = [[150, 158], [26, 84], [150, 10], [274, 84], [62, 26], [238, 26], [62, 142], [238, 142]];
+    let s = `<svg viewBox="0 0 300 168" aria-hidden="true"><defs>
+      <radialGradient id="pf${u}" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="${t.a}"/><stop offset="1" stop-color="${t.b}"/></radialGradient>
+      <linearGradient id="pr${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5326"/><stop offset=".55" stop-color="#5a3013"/><stop offset="1" stop-color="#2e1607"/></linearGradient></defs>
+      <rect x="18" y="20" width="264" height="128" rx="64" fill="#1a0b04"/>
+      <rect x="22" y="24" width="256" height="120" rx="60" fill="url(#pr${u})"/>
+      <rect x="34" y="34" width="232" height="100" rx="50" fill="url(#pf${u})"/>
+      <rect x="48" y="46" width="204" height="76" rx="38" fill="none" stroke="rgba(255,236,170,.4)" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="150" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="7" letter-spacing="2" fill="rgba(255,236,170,.7)">${LB.t('pk_felt')}</text>`;
+    // community cards
+    ['A', 'K', 'Q', '10', 'J'].forEach((r, i) => { s += miniCard(118 + i * 16, 80, 0, r, i % 2 === 0); });
+    // seats with robot chairs and chip stacks
+    seatPos.slice(0, 4).forEach(([x, y], i) => {
+      s += `<circle cx="${x}" cy="${y}" r="9" fill="${i === 0 ? '#ffd23f' : t.bots[i - 1].c}" stroke="#2a1450" stroke-width="2"/><circle cx="${x - 2.6}" cy="${y - 1.5}" r="1.4" fill="#2a1450"/><circle cx="${x + 2.6}" cy="${y - 1.5}" r="1.4" fill="#2a1450"/><path d="M${x - 3} ${y + 2.5} q3 2.5 6 0" fill="none" stroke="#2a1450" stroke-width="1.2" stroke-linecap="round"/>`;
+    });
+    s += stack(110, 62, ['#e8263a', '#ffd23f', '#2f6bff', '#e8263a']) + stack(190, 62, ['#12925a', '#1d1a2e', '#12925a']) + stack(150, 60, ['#a43ae0', '#ffd23f']);
+    s += miniCard(143, 138, -8, null, false) + miniCard(157, 138, 8, null, false);
+    s += `<circle cx="200" cy="112" r="6" fill="#fff" stroke="#2a1450" stroke-width="1.5"/><text x="200" y="114.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="7" fill="#111">D</text>`;
+    return s + '</svg>';
+  }
+
   grid.innerHTML = LB.TABLES[g].map(t => {
     let limits;
     if (g === 'slots') {
       const key = (t.id > 1 ? `m${t.id}_` : '') + 'lb_credits';
       limits = LB.t('lob_credits', { n: Math.round(LB.get(key, 1000)).toLocaleString() });
-    } else limits = LB.t('lob_range', { a: t.chips[0], b: t.chips[t.chips.length - 1] });
-    const art = g === 'slots' ? slotArt(t) : g === 'baccarat' ? baccaratTable(t) : blackjackTable(t);
+    } else if (g === 'poker') limits = LB.t('lob_blinds', { a: t.blinds[0], b: t.blinds[1] });
+    else limits = LB.t('lob_range', { a: t.chips[0], b: t.chips[t.chips.length - 1] });
+    const art = g === 'slots' ? slotArt(t) : g === 'baccarat' ? baccaratTable(t) : g === 'poker' ? pokerTable(t) : blackjackTable(t);
     return `<li><a class="card" style="--a:${t.a};--b:${t.b}" href="${G.page}?${G.param}=${t.id}">
       <span class="num">${t.id}</span>
       <div class="preview${g === 'slots' ? '' : ' table'}">${art}</div>

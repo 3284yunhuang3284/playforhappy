@@ -1,7 +1,7 @@
 {
   "name": "Play For Happy",
   "short_name": "Play For Happy",
-  "description": "Silly, happy, free games: slots, baccarat, blackjack and a block puzzle. Pretend money only.",
+  "description": "Silly, happy, free games: slots, poker, baccarat, blackjack and a block puzzle. Pretend money only.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

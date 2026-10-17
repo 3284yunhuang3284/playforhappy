@@ -15,7 +15,7 @@ const TZ = process.env.STATS_TIMEZONE || 'America/Los_Angeles';
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'stats.json');
 const KEEP_DAYS = 120;
-const PAGES = ['home', 'lobby', 'slots', 'baccarat', 'blackjack', 'block-puzzle'];
+const PAGES = ['home', 'lobby', 'slots', 'poker', 'baccarat', 'blackjack', 'block-puzzle'];
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',

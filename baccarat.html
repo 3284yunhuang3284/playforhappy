@@ -45,12 +45,14 @@
 </style>
 </head>
 <body data-page="baccarat">
-<div class="wrap">
+<div class="wrap has-ledger">
   <header class="topbar">
     <a class="home-link" href="lobby.html?g=baccarat" data-i18n="back_tables">&larr; Tables</a>
     <div class="ttl"><h1 data-i18n="t_bac">Baccarat</h1><span class="tname" id="tname"></span></div>
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
   </header>
+  <div class="layout">
+  <div class="main">
 
   <section class="felt">
     <div class="sides">
@@ -98,6 +100,9 @@
 
   <div class="actions"><span id="langSlot"></span><button class="tool" id="refill" data-i18n="refill_1000">Refill 1000 credits</button></div>
   <p class="rules" data-i18n="bac_rules">8-deck shoe. Hand closest to 9 wins; tens and face cards count 0, aces 1. Third cards follow standard baccarat rules. On a tie, Player and Banker bets are returned. Play credits only.</p>
+  </div>
+  <aside class="ledger" id="ledger" aria-live="polite"></aside>
+  </div>
 </div>
 
 <script src="common.js"></script>
@@ -113,6 +118,7 @@
   document.title = `${LB.t('site_name')} · ${LB.t('t_bac')} · ${LB.tn(T)}`;
   document.querySelectorAll('.chip').forEach((c, i) => { c.dataset.v = T.chips[i]; c.textContent = T.chips[i]; });
   const MIN = T.chips[0];
+  const ledger = Cards.Ledger($('ledger'), `bac_ledger_${T.id}`);
   const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 40 : ms));
   const START = 1000;
   let balance = LB.get('bac_credits', START);
@@ -206,6 +212,7 @@
     balance += back;
     const net = Math.round((back - sum(bets)) * 100) / 100;
     history.push(res); save();
+    ledger.add({ bet: sum(bets), net, res: { t: 'bac', w: res, p, b } });
     phase = 'done';
     $('spot' + res).classList.add('win');
     if (res !== 'T') $(res === 'P' ? 'sideP' : 'sideB').classList.add('won');

@@ -23,12 +23,14 @@
 </style>
 </head>
 <body data-page="blackjack">
-<div class="wrap">
+<div class="wrap has-ledger">
   <header class="topbar">
     <a class="home-link" href="lobby.html?g=blackjack" data-i18n="back_tables">&larr; Tables</a>
     <div class="ttl"><h1 data-i18n="t_bj">Blackjack</h1><span class="tname" id="tname"></span></div>
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
   </header>
+  <div class="layout">
+  <div class="main">
 
   <section class="felt">
     <span class="shoe-note" id="shoeNote"></span>
@@ -70,6 +72,9 @@
 
   <div class="actions"><span id="langSlot"></span><button class="tool" id="refill" data-i18n="refill_1000">Refill 1000 credits</button></div>
   <p class="rules" data-i18n="bj_rules">6-deck shoe. Dealer stands on all 17s. Blackjack pays 3 to 2, other wins pay 1 to 1. Double on any first two cards; split once on a matching pair. Play credits only.</p>
+  </div>
+  <aside class="ledger" id="ledger" aria-live="polite"></aside>
+  </div>
 </div>
 
 <script src="common.js"></script>
@@ -85,6 +90,7 @@
   document.title = `${LB.t('site_name')} · ${LB.t('t_bj')} · ${LB.tn(T)}`;
   document.querySelectorAll('.chip').forEach((c, i) => { c.dataset.v = T.chips[i]; c.textContent = T.chips[i]; });
   const MIN = T.chips[0];
+  const ledger = Cards.Ledger($('ledger'), `bj_ledger_${T.id}`);
   const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 40 : ms));
   const START = 1000;
   let balance = LB.get('bj_credits', START);
@@ -199,7 +205,7 @@
     const t = score(h.cards).t;
     await sleep(220);
     busy = false;
-    if (t > 21) { h.done = true; h.result = LB.t('r_bust'); h.bust = true; h.resultCls = 'lose'; LB.sfx.lose(); await nextHand(); }
+    if (t > 21) { h.done = true; h.result = LB.t('r_bust'); h.rk = 'r_bust'; h.bust = true; h.resultCls = 'lose'; LB.sfx.lose(); await nextHand(); }
     else if (t === 21) { h.done = true; await nextHand(); }
     else updateUI();
   }
@@ -211,7 +217,7 @@
     busy = true; updateUI();
     await giveTo(h.cards, h.els, null); renderHands(); await sleep(260);
     busy = false; h.done = true;
-    if (score(h.cards).t > 21) { h.result = LB.t('r_bust'); h.bust = true; h.resultCls = 'lose'; LB.sfx.lose(); }
+    if (score(h.cards).t > 21) { h.result = LB.t('r_bust'); h.rk = 'r_bust'; h.bust = true; h.resultCls = 'lose'; LB.sfx.lose(); }
     await nextHand();
   }
   async function split() {
@@ -254,17 +260,18 @@
       const p = score(h.cards).t;
       const pBJ = hands.length === 1 && isBJ(h.cards);
       let back = 0;
-      if (p > 21) { h.result = LB.t('r_bust'); h.bust = true; h.resultCls = 'lose'; }
-      else if (pBJ && !dBJ) { back = h.bet * 2.5; h.result = LB.t('r_bj'); h.resultCls = 'win'; anyBJ = true; }
-      else if (dBJ && !pBJ) { h.result = LB.t('r_dbj'); h.resultCls = 'lose'; }
-      else if (pBJ && dBJ) { back = h.bet; h.result = LB.t('r_push'); h.resultCls = 'push'; }
-      else if (d > 21 || p > d) { back = h.bet * 2; h.result = LB.t('r_win'); h.resultCls = 'win'; }
-      else if (p === d) { back = h.bet; h.result = LB.t('r_push'); h.resultCls = 'push'; }
-      else { h.result = LB.t('r_lose'); h.resultCls = 'lose'; }
+      if (p > 21) { h.result = LB.t('r_bust'); h.rk = 'r_bust'; h.bust = true; h.resultCls = 'lose'; }
+      else if (pBJ && !dBJ) { back = h.bet * 2.5; h.result = LB.t('r_bj'); h.rk = 'r_bj'; h.resultCls = 'win'; anyBJ = true; }
+      else if (dBJ && !pBJ) { h.result = LB.t('r_dbj'); h.rk = 'r_dbj'; h.resultCls = 'lose'; }
+      else if (pBJ && dBJ) { back = h.bet; h.result = LB.t('r_push'); h.rk = 'r_push'; h.resultCls = 'push'; }
+      else if (d > 21 || p > d) { back = h.bet * 2; h.result = LB.t('r_win'); h.rk = 'r_win'; h.resultCls = 'win'; }
+      else if (p === d) { back = h.bet; h.result = LB.t('r_push'); h.rk = 'r_push'; h.resultCls = 'push'; }
+      else { h.result = LB.t('r_lose'); h.rk = 'r_lose'; h.resultCls = 'lose'; }
       returned += back;
     }
     balance += returned; save();
     const net = returned - staked;
+    ledger.add({ bet: staked, net, res: hands.map(h => h.rk) });
     $('last').textContent = Math.max(0, Math.round(net));
     renderHands(); updateUI();
     if (net > 0) {

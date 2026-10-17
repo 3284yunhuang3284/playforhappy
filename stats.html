@@ -7,7 +7,7 @@
 <title>Play For Happy Visitors</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: owner dashboard — key gate, summary tiles, 30-day chart, then Games, Where visitors came from, Devices. */
 :root {
@@ -62,6 +62,8 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
 .note { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
 @media (max-width: 760px) { .cols, .cols.three { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+html:lang(vi) { --display: "Baloo 2", "Fredoka", system-ui, sans-serif; --body: "Baloo 2", system-ui, sans-serif; }
+html:lang(vi) h1, html:lang(vi) h2 { font-weight: 800; }
 </style>
 </head>
 <body data-page="stats">
@@ -129,10 +131,10 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const NAMES = { home: LB.t('g_home'), lobby: LB.t('g_lobby'), slots: LB.t('g_slots'), baccarat: LB.t('g_baccarat'), blackjack: LB.t('g_blackjack'), 'block-puzzle': LB.t('g_bp'), other: LB.t('g_other') };
+  const NAMES = { home: LB.t('g_home'), lobby: LB.t('g_lobby'), slots: LB.t('g_slots'), baccarat: LB.t('g_baccarat'), blackjack: LB.t('g_blackjack'), poker: LB.t('g_poker'), 'block-puzzle': LB.t('g_bp'), other: LB.t('g_other') };
   const tr = k => (LB.zh ? LB.t(k) : k);
   document.title = `${LB.t('site_name')} · ${LB.t('st_visitors')}`;
-  const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', 'block-puzzle': '#4fa8ff', other: '#999' };
+  const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', poker: '#b56bff', 'block-puzzle': '#4fa8ff', other: '#999' };
   const getKey = () => { try { return localStorage.getItem('pfh_admin_key') || ''; } catch { return ''; } };
   const setKey = k => { try { k ? localStorage.setItem('pfh_admin_key', k) : localStorage.removeItem('pfh_admin_key'); } catch {} };
   const fmt = n => Number(n || 0).toLocaleString();

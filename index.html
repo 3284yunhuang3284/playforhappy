@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: sunny comic-book lobby — bouncing title + joke ticker, waving mascot with speech bubble, 2×2 sticker tiles, floating doodles, stats badge pinned bottom-right. One deliberate bright look in both host themes. */
 :root {
@@ -30,6 +30,8 @@
   --body: "Fredoka", "Baloo 2", system-ui, -apple-system, sans-serif;
   color-scheme: light;
 }
+html:lang(vi) { --display: "Baloo 2", "Fredoka", system-ui, sans-serif; --body: "Baloo 2", system-ui, sans-serif; }
+html:lang(vi) h1, html:lang(vi) .tile h2, html:lang(vi) .go, html:lang(vi) .sticker { font-weight: 800; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -82,8 +84,10 @@ h1 .ch.jump { animation: jump .55s cubic-bezier(.3,1.8,.5,1); }
 .tile {
   --c: var(--pink);
   position: relative; display: flex; flex-direction: column; gap: 8px; height: 100%;
-  padding: 18px 18px 16px; border-radius: 26px; text-decoration: none; color: var(--ink);
-  background: radial-gradient(circle at 20% 0%, rgba(255,255,255,.55), transparent 55%), var(--c);
+  padding: 18px 18px 16px; border-radius: 26px; text-decoration: none; color: #fff;
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--c) 55%, transparent), transparent 60%),
+    linear-gradient(160deg, color-mix(in srgb, var(--c) 42%, #14082e), color-mix(in srgb, var(--c) 18%, #0b0420));
   border: 4px solid var(--ink); box-shadow: 7px 8px 0 var(--ink);
   transition: transform .2s cubic-bezier(.3,1.6,.5,1), box-shadow .2s;
 }
@@ -91,18 +95,24 @@ h1 .ch.jump { animation: jump .55s cubic-bezier(.3,1.8,.5,1); }
 .tile:hover .art svg { animation: jiggle .5s ease-in-out infinite; }
 .tile:focus-visible { outline: 4px dashed #fff; outline-offset: 4px; }
 @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg) scale(1.05); } 75% { transform: rotate(6deg) scale(1.05); } }
-.tile.slots { --c: #ff6b5e; } .tile.baccarat { --c: #3ee0b5; } .tile.blackjack { --c: #8fe04f; } .tile.puzzle { --c: #6fb8ff; }
-.sticker { position: absolute; z-index: 3; top: -14px; right: -10px; padding: 6px 12px; border-radius: 12px; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 16px; letter-spacing: .03em; transform: rotate(8deg); box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
+.tile.slots { --c: #ff3b3b; } .tile.poker { --c: #b56bff; } .tile.baccarat { --c: #19d4a0; } .tile.blackjack { --c: #4ed84a; } .tile.puzzle { --c: #3d9bff; }
+.tile p { color: rgba(255,255,255,.88); }
+.games li.wide { grid-column: 1 / -1; }
+.games li.wide .tile { flex-direction: row; align-items: center; gap: 22px; }
+.games li.wide .art { flex: none; width: 150px; }
+.games li.wide .txt { display: flex !important; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.games li.wide .go { margin: 0; align-self: center; }
+.sticker { color: var(--ink); position: absolute; z-index: 3; top: -14px; right: -10px; padding: 6px 12px; border-radius: 12px; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 16px; letter-spacing: .03em; transform: rotate(8deg); box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
 .art { height: 118px; display: grid; place-items: center; }
 .art svg { height: 100%; width: auto; max-width: 100%; }
-.tile h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(24px, 5.4vw, 34px); line-height: 1; letter-spacing: .02em; color: #fff; -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); }
+.tile h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(24px, 5.4vw, 34px); line-height: 1; letter-spacing: .02em; color: var(--sun); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); }
 .tile p { margin: 0; font-size: 16px; line-height: 1.35; font-weight: 500; }
-.go { margin-top: auto; align-self: flex-start; font-family: var(--display); font-size: 18px; letter-spacing: .04em; padding: 8px 16px 6px; border-radius: 14px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.go { color: var(--ink); margin-top: auto; align-self: flex-start; font-family: var(--display); font-size: 18px; letter-spacing: .04em; padding: 8px 16px 6px; border-radius: 14px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 
 /* chasing marquee lights around each game square */
 .lights { position: absolute; inset: 7px; pointer-events: none; z-index: 2; }
 .bulb { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--b); border: 1.5px solid rgba(42,20,80,.55); opacity: .35; transform: scale(.75); animation: chase 1.4s linear infinite; animation-delay: var(--dl); }
-@keyframes chase { 0%, 100% { opacity: .3; transform: scale(.7); box-shadow: none; } 12% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px 3px var(--b), 0 0 2px #fff inset; } 30% { opacity: .55; transform: scale(.9); } }
+@keyframes chase { 0%, 100% { opacity: .22; transform: scale(.7); box-shadow: none; } 12% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px 3px var(--b), 0 0 2px #fff inset; } 30% { opacity: .55; transform: scale(.9); } }
 .tile:hover .bulb { animation-duration: .7s; }
 footer { text-align: center; font-weight: 600; font-size: 15px; }
 footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,253,245,.85); border: 2px solid var(--ink); }
@@ -125,6 +135,8 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
 
 @media (max-width: 520px) {
   .games { grid-template-columns: 1fr; gap: 18px; }
+  .games li.wide .art { width: 92px; }
+  .games li.wide .go { display: none; }
   .tile { flex-direction: row; align-items: center; gap: 12px; padding: 14px 14px 14px 10px; }
   .art { height: 84px; width: 92px; flex: none; }
   .tile .txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -178,6 +190,12 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
       <div class="txt"><h2 data-i18n="t_slots">Slot Machines</h2><p data-i18n="t_slots_d">Spin it to win it. Pretend money, real giggles. Watch out for the monkey.</p></div>
       <span class="go" data-i18n="t_slots_go">Let's gooo!</span>
     </a></li>
+    <li><a class="tile poker" href="lobby.html?g=poker">
+      <span class="sticker" data-i18n="t_tables_s">4 tables!</span>
+      <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><ellipse cx="80" cy="66" rx="72" ry="44" fill="#5a3013" stroke="#2a1450" stroke-width="4"/><ellipse cx="80" cy="66" rx="60" ry="34" fill="#1f9a6a" stroke="#ffd23f" stroke-width="2" stroke-dasharray="5 4"/><g transform="rotate(-14 62 60)"><rect x="46" y="40" width="30" height="42" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><text x="51" y="57" font-family="Luckiest Guy, Impact, sans-serif" font-size="15" fill="#ff2d55">A</text><path d="M61 64 q-7-7 0-11 q7 4 0 11z" fill="#ff2d55"/></g><g transform="rotate(12 98 60)"><rect x="84" y="40" width="30" height="42" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><text x="89" y="57" font-family="Luckiest Guy, Impact, sans-serif" font-size="15" fill="#2a1450">A</text><path d="M99 55 l7 10 h-14z" fill="#2a1450"/></g><g stroke="#2a1450" stroke-width="2.5"><ellipse cx="34" cy="90" rx="12" ry="6" fill="#ff2d55"/><ellipse cx="34" cy="85" rx="12" ry="6" fill="#ffd23f"/><ellipse cx="34" cy="80" rx="12" ry="6" fill="#4fc3ff"/><ellipse cx="128" cy="92" rx="12" ry="6" fill="#5cf2a3"/><ellipse cx="128" cy="87" rx="12" ry="6" fill="#9b5cff"/></g></svg></div>
+      <div class="txt"><h2 data-i18n="t_pk">Poker</h2><p data-i18n="t_pk_d">Texas Hold'em against three very silly robots. Bluff like a pro!</p></div>
+      <span class="go" data-i18n="t_pk_go">All in!</span>
+    </a></li>
     <li><a class="tile baccarat" href="lobby.html?g=baccarat">
       <span class="sticker" data-i18n="t_tables_s">4 tables!</span>
       <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><g transform="rotate(-14 60 64)"><rect x="28" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="38" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#ff2d55">9</text><path d="M56 62 q-10-10 0-16 q10 6 0 16z M56 62 q10-10 0-16" fill="#ff2d55"/><circle cx="56" cy="64" r="11" fill="#ff2d55"/></g><g transform="rotate(12 108 64)"><rect x="80" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="90" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#2a1450">K</text><circle cx="98" cy="64" r="5" fill="#2a1450"/><circle cx="118" cy="64" r="5" fill="#2a1450"/><path d="M96 76 q12 10 24 0" fill="none" stroke="#2a1450" stroke-width="4" stroke-linecap="round"/></g></svg></div>
@@ -190,7 +208,7 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
       <div class="txt"><h2 data-i18n="t_bj">Blackjack</h2><p data-i18n="t_bj_d">Get to 21 without going kaboom. The dealer is a duck. Probably.</p></div>
       <span class="go" data-i18n="t_bj_go">Hit me!</span>
     </a></li>
-    <li><a class="tile puzzle" href="block-puzzle.html">
+    <li class="wide"><a class="tile puzzle" href="block-puzzle.html">
       <span class="sticker" data-i18n="t_bp_s">Addictive-ish</span>
       <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="28" y="8" width="104" height="104" rx="14" fill="#2a1450" stroke="#2a1450" stroke-width="4"/><g stroke="#2a1450" stroke-width="3"><rect x="36" y="16" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="58" y="16" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="36" y="38" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="84" y="38" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="106" y="38" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="106" y="60" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="36" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="58" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="80" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="102" y="84" width="22" height="22" rx="5" fill="#5cf2a3"/></g><circle cx="69" cy="27" r="3" fill="#2a1450"/><circle cx="47" cy="27" r="3" fill="#2a1450"/></svg></div>
       <div class="txt"><h2 data-i18n="t_bp">Block Puzzle</h2><p data-i18n="t_bp_d">Stuff blocks in, watch rows go poof. Very satisfying. Very.</p></div>

@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Play For Happy Poker</title>
+<meta name="theme-color" content="#06331f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="table.css">
+<style>
+/* Layout: oval poker table with four seats (you at the bottom), community cards in the middle, action bar below, profit/loss panel on the right. */
+.ptable {
+  position: relative; width: 100%; aspect-ratio: 16 / 11; max-height: 560px; border-radius: 999px / 70%;
+  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--felt-a) 85%, #fff 15%), var(--felt-a) 45%, var(--felt-b) 100%);
+  box-shadow: 0 0 0 12px #5a3013, 0 0 0 14px #2e1607, 0 0 0 16px var(--gold), 0 20px 50px rgba(0,0,0,.5), inset 0 0 60px rgba(0,0,0,.45);
+  margin: 18px 10px 26px;
+}
+.ptable::before { content: ""; position: absolute; inset: 9%; border-radius: 999px / 70%; border: 2px dashed rgba(255,236,170,.35); pointer-events: none; }
+.felt-word { position: absolute; left: 50%; top: 66%; transform: translateX(-50%); font: 700 clamp(10px, 2vw, 14px) Georgia, serif; letter-spacing: .3em; color: rgba(255,236,170,.45); white-space: nowrap; pointer-events: none; }
+.center { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 8px; width: 74%; }
+.pot:empty { visibility: hidden; }
+.pot { font-family: var(--block); font-size: clamp(14px, 3.4vw, 20px); color: var(--gold); background: rgba(0,0,0,.4); padding: 3px 14px; border-radius: 999px; min-height: 1.4em; font-variant-numeric: tabular-nums; }
+.board { display: flex; gap: 5px; justify-content: center; min-height: calc(var(--bw) * 1.4); --bw: clamp(38px, 9vw, 60px); }
+.board .card { --w: var(--bw); }
+.board .slot { width: var(--bw); aspect-ratio: 5 / 7; border-radius: 7px; border: 2px dashed rgba(255,255,255,.18); }
+
+.seat { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 2; --cw: clamp(30px, 7.4vw, 46px); }
+.seat.s0 { left: 50%; bottom: -16px; transform: translateX(-50%); --cw: clamp(44px, 11vw, 64px); flex-direction: column; }
+.seat.s1 { left: -4px; top: 50%; transform: translateY(-58%); }
+.seat.s2 { left: 50%; top: -18px; transform: translateX(-50%); flex-direction: column-reverse; }
+.seat.s3 { right: -4px; top: 50%; transform: translateY(-58%); }
+.pcards { display: flex; min-height: calc(var(--cw) * 1.4); }
+.pcards .card { --w: var(--cw); }
+.pcards .card + .card { margin-left: calc(var(--cw) * -.3); }
+.plate { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 999px; background: rgba(10,6,4,.82); box-shadow: 0 0 0 2px rgba(255,236,170,.55), 0 4px 10px rgba(0,0,0,.4); transition: box-shadow .2s, opacity .2s; min-width: 0; }
+.seat.turn .plate { box-shadow: 0 0 0 3px var(--gold), 0 0 22px rgba(255,210,63,.8); }
+.seat.out .plate, .seat.out .pcards { opacity: .45; }
+.seat.won .plate { box-shadow: 0 0 0 3px #5cf28a, 0 0 26px rgba(92,242,138,.8); }
+.ava { width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; }
+.ava svg { width: 100%; height: 100%; }
+.info { display: flex; flex-direction: column; line-height: 1.05; min-width: 0; }
+.pname { font: 700 13px var(--util); letter-spacing: .04em; color: #fff; white-space: nowrap; max-width: 108px; overflow: hidden; text-overflow: ellipsis; }
+.pstack { font-family: var(--block); font-size: 13px; color: var(--gold); font-variant-numeric: tabular-nums; }
+.bubble { position: absolute; white-space: nowrap; padding: 3px 9px; border-radius: 10px; background: #fffdf5; color: #2a1450; font: 700 12.5px var(--util); letter-spacing: .03em; box-shadow: 0 3px 0 rgba(0,0,0,.3); opacity: 0; transform: scale(.7); transition: opacity .15s, transform .2s cubic-bezier(.3,1.6,.5,1); pointer-events: none; z-index: 4; }
+.bubble.show { opacity: 1; transform: scale(1); }
+.s0 .bubble { bottom: calc(100% + 4px); } .s2 .bubble { top: calc(100% + 4px); }
+.s1 .bubble { left: calc(100% - 10px); top: -8px; } .s3 .bubble { right: calc(100% - 10px); top: -8px; }
+.pbet { position: absolute; display: flex; align-items: center; gap: 4px; font-family: var(--block); font-size: 12.5px; color: #fff; text-shadow: 0 1px 2px #000; white-space: nowrap; z-index: 3; }
+.pbet:empty { display: none; }
+.pbet::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle, #e8263a 0 45%, #fff 46% 56%, #e8263a 57%); box-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.s0 .pbet { top: -26px; left: calc(100% + 6px); } .s2 .pbet { bottom: -24px; left: calc(100% + 4px); }
+.s1 .pbet { left: calc(100% + 8px); top: 60%; } .s3 .pbet { right: calc(100% + 8px); top: 60%; }
+.dbtn { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #111; font: 800 12px var(--util); display: grid; place-items: center; box-shadow: 0 2px 4px rgba(0,0,0,.5); z-index: 3; }
+.dbtn[hidden] { display: none; }
+.s0 .dbtn { right: calc(100% + 8px); top: 30%; } .s2 .dbtn { right: calc(100% + 8px); bottom: 20%; }
+.s1 .dbtn { left: calc(100% + 8px); top: 10%; } .s3 .dbtn { right: calc(100% + 8px); top: 10%; }
+.hand-name { font: 700 12px var(--util); letter-spacing: .06em; color: #5cf28a; text-transform: uppercase; min-height: 1em; white-space: nowrap; }
+.s2 .hand-name { order: -1; }
+.pk-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pk-actions .btn { min-width: 0; padding: 12px 8px; font-size: 15px; }
+.pk-actions .btn.fold { background: linear-gradient(180deg, #ffb3b3, #ff7b7b); box-shadow: 0 4px 0 #9a2f2f; }
+@media (max-width: 560px) {
+  .ptable { aspect-ratio: 10 / 13; border-radius: 46% / 32%; margin: 22px 4px 30px; }
+  .ptable::before { border-radius: 46% / 32%; }
+  .seat.s1 { left: -8px; } .seat.s3 { right: -8px; }
+  .pname { max-width: 74px; font-size: 12px; }
+  .ava { width: 28px; height: 28px; }
+  .s1 .pbet, .s3 .pbet { top: calc(100% + 4px); left: 50%; right: auto; transform: translateX(-50%); }
+  .center { width: 92%; top: 47%; }
+  .pk-actions .btn { font-size: 14px; }
+}
+</style>
+</head>
+<body data-page="poker">
+<div class="wrap has-ledger">
+  <header class="topbar">
+    <a class="home-link" href="lobby.html?g=poker" data-i18n="back_tables">&larr; Tables</a>
+    <div class="ttl"><h1 data-i18n="t_pk">Poker</h1><span class="tname" id="tname"></span></div>
+    <button class="tool" id="sound" aria-pressed="true">Sound on</button>
+  </header>
+  <div class="layout">
+  <div class="main">
+    <section class="ptable" id="ptable" aria-label="Poker table">
+      <div class="felt-word" id="feltWord"></div>
+      <div class="center">
+        <div class="pot" id="pot"></div>
+        <div class="board" id="board"><span class="slot"></span><span class="slot"></span><span class="slot"></span><span class="slot"></span><span class="slot"></span></div>
+      </div>
+      <div class="seat s1" id="seat1"></div>
+      <div class="seat s2" id="seat2"></div>
+      <div class="seat s3" id="seat3"></div>
+      <div class="seat s0" id="seat0"></div>
+    </section>
+
+    <div class="message" id="msg" role="status"></div>
+
+    <div class="readout" aria-live="polite">
+      <div class="led"><span class="label" data-i18n="led_balance">Balance</span><span class="num" id="balance">1000</span></div>
+      <div class="led"><span class="label" data-i18n="pk_pot_lbl">Pot</span><span class="num" id="potNum">0</span></div>
+      <div class="led"><span class="label" data-i18n="led_last">Last win</span><span class="num" id="last">0</span></div>
+    </div>
+
+    <div class="pk-actions" id="acts">
+      <button class="btn fold" id="aFold" data-i18n="pk_fold">Fold</button>
+      <button class="btn alt" id="aCall">Check</button>
+      <button class="btn hot" id="aAll" data-i18n="pk_allin">All-in</button>
+      <button class="btn" id="aHalf">Raise ½ pot</button>
+      <button class="btn" id="aPot">Raise pot</button>
+    </div>
+    <div class="actions">
+      <button class="btn" id="next" hidden data-i18n="pk_next">Next hand</button>
+    </div>
+    <div class="actions"><span id="langSlot"></span><button class="tool" id="refill" data-i18n="refill_1000">Refill 1000 credits</button></div>
+    <p class="rules" data-i18n="pk_rules">No-limit Texas Hold'em.</p>
+  </div>
+  <aside class="ledger" id="ledger" aria-live="polite"></aside>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script src="cards.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fast = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = ms => new Promise(r => setTimeout(r, fast ? Math.min(ms, 60) : ms));
+  const T = LB.pick('poker', 't');
+  const [SB, BB] = T.blinds;
+  document.documentElement.style.setProperty('--felt-a', T.a);
+  document.documentElement.style.setProperty('--felt-b', T.b);
+  $('tname').textContent = LB.t('table_label', { id: T.id, name: LB.tn(T) }) + ' · ' + LB.t('lob_blinds', { a: SB, b: BB });
+  document.title = `${LB.t('site_name')} · ${LB.t('t_pk')} · ${LB.tn(T)}`;
+  $('feltWord').textContent = LB.t('pk_felt');
+  const ledger = Cards.Ledger($('ledger'), `pk_ledger_${T.id}`);
+  const START = 1000;
+
+  // ---------- players ----------
+  const botStacks = LB.get(`pk_bots_${T.id}`, null) || T.bots.map(() => BB * 100);
+  const players = [
+    { id: 0, human: true, name: LB.t('pk_you'), color: '#ffd23f', stack: LB.get('pk_credits', START) },
+    ...T.bots.map((b, i) => ({ id: i + 1, human: false, name: LB.tn(b), color: b.c, style: b.style, stack: botStacks[i] }))
+  ];
+  let dealer = LB.get(`pk_dealer_${T.id}`, Math.floor(Math.random() * 4));
+  let deck = [], board = [], currentBet = 0, minRaise = BB, running = false, handNo = 0;
+
+  const ROBOT = c => `<svg viewBox="0 0 40 40"><line x1="20" y1="3" x2="20" y2="9" stroke="#2a1450" stroke-width="2.5"/><circle cx="20" cy="3.5" r="2.8" fill="#ff2d55" stroke="#2a1450" stroke-width="1.5"/><rect x="5" y="9" width="30" height="26" rx="9" fill="${c}" stroke="#2a1450" stroke-width="2.5"/><rect x="10" y="15" width="20" height="9" rx="4.5" fill="#1d1638"/><circle cx="15" cy="19.5" r="2.4" fill="#5cf2a3"/><circle cx="25" cy="19.5" r="2.4" fill="#5cf2a3"/><path d="M14 29 q6 4 12 0" fill="none" stroke="#2a1450" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+  const PENNY = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#f5a623" stroke="#2a1450" stroke-width="2.5"/><circle cx="20" cy="20" r="13.5" fill="#ffd23f"/><circle cx="15" cy="18" r="2.6" fill="#2a1450"/><circle cx="25" cy="18" r="2.6" fill="#2a1450"/><path d="M13 24 q7 7 14 0z" fill="#c81e5a" stroke="#2a1450" stroke-width="1.6"/></svg>`;
+  players.forEach(p => {
+    const el = $('seat' + p.id);
+    el.innerHTML = `<div class="hand-name"></div><div class="pcards"></div>
+      <div class="plate"><div class="ava">${p.human ? PENNY : ROBOT(p.color)}</div><div class="info"><span class="pname">${p.name}</span><span class="pstack"></span></div></div>
+      <div class="bubble"></div><div class="pbet"></div><div class="dbtn" hidden>D</div>`;
+    p.el = el;
+  });
+  const seatPart = (p, sel) => p.el.querySelector(sel);
+
+  // ---------- hand evaluation ----------
+  const RV = r => ({ A: 14, K: 13, Q: 12, J: 11 })[r] || +r;
+  function eval5(cs) {
+    const v = cs.map(c => RV(c.r)).sort((a, b) => b - a);
+    const flush = cs.every(c => c.suit === cs[0].suit);
+    const uniq = [...new Set(v)];
+    let straightHigh = 0;
+    if (uniq.length === 5) {
+      if (v[0] - v[4] === 4) straightHigh = v[0];
+      else if (v[0] === 14 && v[1] === 5) straightHigh = 5;
+    }
+    const counts = {}; v.forEach(x => counts[x] = (counts[x] || 0) + 1);
+    const groups = Object.entries(counts).map(([k, n]) => [n, +k]).sort((a, b) => b[0] - a[0] || b[1] - a[1]);
+    const byGroup = groups.map(g => g[1]);
+    if (straightHigh && flush) return [straightHigh === 14 ? 9 : 8, straightHigh];
+    if (groups[0][0] === 4) return [7, ...byGroup];
+    if (groups[0][0] === 3 && groups[1][0] === 2) return [6, ...byGroup];
+    if (flush) return [5, ...v];
+    if (straightHigh) return [4, straightHigh];
+    if (groups[0][0] === 3) return [3, ...byGroup];
+    if (groups[0][0] === 2 && groups[1][0] === 2) return [2, ...byGroup];
+    if (groups[0][0] === 2) return [1, ...byGroup];
+    return [0, ...v];
+  }
+  const cmp = (a, b) => { for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (a[i] || 0) - (b[i] || 0); if (d) return d; } return 0; };
+  function best(cards) {
+    let top = null;
+    const n = cards.length;
+    for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) for (let c = b + 1; c < n; c++) for (let d = c + 1; d < n; d++) for (let e = d + 1; e < n; e++) {
+      const r = eval5([cards[a], cards[b], cards[c], cards[d], cards[e]]);
+      if (!top || cmp(r, top) > 0) top = r;
+    }
+    return top;
+  }
+
+  // ---------- bot brains ----------
+  function preflopStrength(h) {
+    const [a, b] = h.map(c => RV(c.r)).sort((x, y) => y - x);
+    let s = a + b / 2;
+    if (a === b) s = Math.max(16, a * 2 + 6);
+    if (h[0].suit === h[1].suit) s += 3;
+    const gap = a - b - 1;
+    if (a !== b) s -= gap <= 0 ? 0 : gap === 1 ? 1 : gap === 2 ? 2.5 : 4;
+    return Math.max(0, Math.min(1, (s - 6) / 28));
+  }
+  function equity(p, opponents) {
+    if (board.length === 0) return preflopStrength(p.cards) * (opponents > 1 ? .85 : 1);
+    const known = new Set([...p.cards, ...board].map(c => c.r + c.suit));
+    const pool = [];
+    for (let s = 0; s < 4; s++) for (const r of ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']) if (!known.has(r + s)) pool.push({ r, suit: s });
+    let wins = 0; const SIMS = 140;
+    for (let i = 0; i < SIMS; i++) {
+      for (let k = pool.length - 1; k > pool.length - 1 - (opponents * 2 + 5 - board.length); k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
+      let idx = pool.length - 1;
+      const full = board.slice(); while (full.length < 5) full.push(pool[idx--]);
+      const mine = best([...p.cards, ...full]);
+      let lost = false, tied = false;
+      for (let o = 0; o < opponents && !lost; o++) {
+        const opp = best([pool[idx--], pool[idx--], ...full]);
+        const c = cmp(opp, mine); if (c > 0) lost = true; else if (c === 0) tied = true;
+      }
+      if (!lost) wins += tied ? .5 : 1;
+    }
+    return wins / SIMS;
+  }
+  const STYLE = { tight: { raise: .66, margin: .06, bluff: .03 }, calm: { raise: .58, margin: 0, bluff: .07 }, loose: { raise: .5, margin: -.06, bluff: .14 } };
+  async function botAct(p) {
+    say(p, '…', true);
+    await sleep(500 + Math.random() * 600);
+    const st = STYLE[p.style] || STYLE.calm;
+    const opp = players.filter(q => q !== p && !q.folded).length;
+    const e = equity(p, Math.max(1, opp));
+    const toCall = currentBet - p.bet, pot = potSize();
+    const r = Math.random();
+    const raiseTo = frac => clampRaise(p, currentBet + Math.max(minRaise, Math.round((pot + toCall) * frac / SB) * SB));
+    if (toCall <= 0) {
+      if (e > st.raise + .15 && r < .55) return { a: 'raise', to: raiseTo(1) };
+      if (e > st.raise) return { a: 'raise', to: raiseTo(r < .5 ? .5 : .75) };
+      if (r < st.bluff) return { a: 'raise', to: raiseTo(.5) };
+      return { a: 'check' };
+    }
+    const odds = toCall / (pot + toCall);
+    const allInCall = toCall >= p.stack;
+    if (e > st.raise + .14 && r < .6 && !allInCall) return { a: 'raise', to: raiseTo(r < .3 ? 1 : .6) };
+    if (allInCall) return e > (p.style === 'loose' ? .45 : .55) ? { a: 'call' } : { a: 'fold' };
+    if (e >= odds + st.margin) return { a: 'call' };
+    if (r < st.bluff * .5) return { a: 'raise', to: raiseTo(.6) };
+    return { a: 'fold' };
+  }
+  function clampRaise(p, to) { return Math.min(to, p.bet + p.stack); }
+
+  // ---------- human input ----------
+  let humanResolve = null;
+  function humanAct(p) {
+    return new Promise(res => {
+      humanResolve = res;
+      const toCall = currentBet - p.bet, pot = potSize();
+      const max = p.bet + p.stack;
+      const label = to => (currentBet === 0 ? LB.t('pk_bet_n', { n: to }) : LB.t('pk_raise_to', { n: to }));
+      const half = clampRaise(p, currentBet + Math.max(minRaise, Math.round((pot + toCall) / 2 / SB) * SB));
+      const full = clampRaise(p, currentBet + Math.max(minRaise, Math.round((pot + toCall) / SB) * SB));
+      $('aCall').textContent = toCall > 0 ? LB.t('pk_call', { n: Math.min(toCall, p.stack) }) : LB.t('pk_check');
+      $('aHalf').textContent = label(half); $('aPot').textContent = label(full);
+      $('aHalf').dataset.to = half; $('aPot').dataset.to = full;
+      $('aHalf').disabled = half <= currentBet || half >= max; $('aPot').disabled = full <= currentBet || full >= max || full === half;
+      $('aFold').disabled = false; $('aCall').disabled = false; $('aAll').disabled = p.stack <= 0;
+      setMsg(LB.t('pk_your_turn'));
+    });
+  }
+  function choose(action) { if (!humanResolve) return; const r = humanResolve; humanResolve = null; lockActions(); LB.sfx.click(); r(action); }
+  function lockActions() { ['aFold', 'aCall', 'aAll', 'aHalf', 'aPot'].forEach(id => $(id).disabled = true); }
+  function resetLabels() { $('aCall').textContent = LB.t('pk_check'); $('aHalf').textContent = LB.t('pk_half'); $('aPot').textContent = LB.t('pk_pot'); }
+  $('aFold').addEventListener('click', () => choose({ a: 'fold' }));
+  $('aCall').addEventListener('click', () => choose(currentBet - players[0].bet > 0 ? { a: 'call' } : { a: 'check' }));
+  $('aAll').addEventListener('click', () => choose({ a: 'raise', to: players[0].bet + players[0].stack }));
+  $('aHalf').addEventListener('click', () => choose({ a: 'raise', to: +$('aHalf').dataset.to }));
+  $('aPot').addEventListener('click', () => choose({ a: 'raise', to: +$('aPot').dataset.to }));
+
+  // ---------- table helpers ----------
+  const potSize = () => players.reduce((a, p) => a + p.contrib, 0);
+  const next = i => (i + 1) % players.length;
+  const canAct = p => !p.folded && !p.allin;
+  const live = () => players.filter(p => !p.folded);
+  function setMsg(t, cls = '') { const m = $('msg'); m.textContent = t; m.className = 'message ' + cls; }
+  function say(p, text, sticky) {
+    const b = seatPart(p, '.bubble'); b.textContent = text; b.classList.add('show');
+    clearTimeout(p.sayT); if (!sticky) p.sayT = setTimeout(() => b.classList.remove('show'), 1600);
+  }
+  function render() {
+    players.forEach(p => {
+      seatPart(p, '.pstack').textContent = p.stack.toLocaleString();
+      seatPart(p, '.pbet').textContent = p.bet ? p.bet.toLocaleString() : '';
+      seatPart(p, '.dbtn').hidden = p.id !== dealer;
+      p.el.classList.toggle('out', !!p.folded);
+    });
+    const pot = potSize();
+    $('pot').textContent = pot ? `${LB.t('pk_pot_lbl')} ${pot.toLocaleString()}` : '';
+    $('potNum').textContent = pot.toLocaleString();
+    $('balance').textContent = players[0].stack.toLocaleString();
+    $('sound').textContent = LB.t(LB.soundOn ? 'sound_on' : 'sound_off');
+    $('refill').hidden = running || players[0].stack >= BB;
+  }
+  function put(p, amt) { amt = Math.max(0, Math.min(amt, p.stack)); p.stack -= amt; p.bet += amt; p.contrib += amt; if (p.stack === 0) p.allin = true; if (amt) LB.sfx.chip(); }
+  function drawCard() { return deck.pop(); }
+  function renderBoard() {
+    const el = $('board'); el.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      if (board[i]) { const c = board[i]._el || (board[i]._el = Cards.el(board[i])); el.appendChild(c); }
+      else { const s = document.createElement('span'); s.className = 'slot'; el.appendChild(s); }
+    }
+  }
+  function save() {
+    LB.set('pk_credits', players[0].stack);
+    LB.set(`pk_bots_${T.id}`, players.slice(1).map(p => p.stack));
+    LB.set(`pk_dealer_${T.id}`, dealer);
+  }
+
+  // ---------- one betting round ----------
+  async function bettingRound(start, preflop) {
+    if (!preflop) { players.forEach(p => p.bet = 0); currentBet = 0; minRaise = BB; render(); }
+    let need = new Set(players.filter(canAct).map(p => p.id));
+    let i = start;
+    let guard = 0;
+    while (need.size && live().length > 1 && guard++ < 200) {
+      const p = players[i];
+      if (need.has(p.id)) {
+        need.delete(p.id);
+        const others = players.filter(q => q !== p && canAct(q)).length;
+        if (canAct(p) && !(others === 0 && p.bet >= currentBet)) {
+          p.el.classList.add('turn');
+          const act = p.human ? await humanAct(p) : await botAct(p);
+          p.el.classList.remove('turn');
+          const toCall = currentBet - p.bet;
+          if (act.a === 'fold') { p.folded = true; say(p, LB.t('pk_act_fold')); LB.sfx.flip(); p.cardEls.forEach(e => e.style.opacity = .35); }
+          else if (act.a === 'check' || (act.a === 'call' && toCall <= 0)) { say(p, LB.t('pk_act_check')); LB.tone(300, .05, 'triangle', .08); }
+          else if (act.a === 'call') { put(p, toCall); say(p, p.allin ? LB.t('pk_act_allin', { n: p.bet }) : LB.t('pk_act_call', { n: Math.min(toCall, p.bet) })); }
+          else if (act.a === 'raise') {
+            let to = Math.min(act.to, p.bet + p.stack);
+            if (to <= currentBet) { put(p, currentBet - p.bet); say(p, p.allin ? LB.t('pk_act_allin', { n: p.bet }) : LB.t('pk_act_call', { n: p.bet })); }
+            else {
+              const wasBet = currentBet === 0;
+              put(p, to - p.bet);
+              if (to - currentBet >= minRaise) minRaise = to - currentBet;
+              currentBet = to;
+              say(p, p.allin ? LB.t('pk_act_allin', { n: to }) : wasBet ? LB.t('pk_act_bet', { n: to }) : LB.t('pk_act_raise', { n: to }));
+              need = new Set(players.filter(q => q !== p && canAct(q)).map(q => q.id));
+            }
+          }
+          render();
+          await sleep(p.human ? 150 : 250);
+        }
+      }
+      i = next(i);
+    }
+  }
+
+  // ---------- a full hand ----------
+  async function playHand() {
+    if (running) return;
+    if (players[0].stack < BB) { setMsg(LB.t('pk_broke'), 'lose'); render(); return; }
+    running = true; handNo++;
+    $('next').hidden = true; lockActions();
+    players.slice(1).forEach(p => { if (p.stack < BB * 2) { p.stack = BB * 100; say(p, LB.t('pk_rebuy', { name: '' }).trim()); } });
+    players.forEach(p => {
+      Object.assign(p, { cards: [], cardEls: [], folded: false, allin: false, bet: 0, contrib: 0 });
+      seatPart(p, '.pcards').innerHTML = ''; seatPart(p, '.hand-name').textContent = '';
+      p.el.classList.remove('won', 'out', 'turn');
+      seatPart(p, '.bubble').classList.remove('show');
+    });
+    const startStack = players[0].stack;
+    deck = Cards.shoe(1); board = []; renderBoard();
+    dealer = next(dealer);
+    const sbP = players[next(dealer)], bbP = players[next(next(dealer))];
+    put(sbP, SB); put(bbP, BB); say(sbP, LB.t('pk_sb', { n: sbP.bet })); say(bbP, LB.t('pk_bb', { n: bbP.bet }));
+    currentBet = BB; minRaise = BB;
+    render(); setMsg(LB.t('dealing'));
+    // deal two cards each, starting left of the dealer
+    for (let round = 0; round < 2; round++) {
+      let i = next(dealer);
+      for (let k = 0; k < players.length; k++) {
+        const p = players[i], c = drawCard(); p.cards.push(c);
+        const e = Cards.el(c, !p.human); p.cardEls.push(e); seatPart(p, '.pcards').appendChild(e);
+        LB.sfx.card(); await sleep(140); i = next(i);
+      }
+    }
+    setMsg('');
+    await bettingRound(next(next(next(dealer))), true);
+    const streets = [['st_flop', 3], ['st_turn', 1], ['st_river', 1]];
+    for (const [name, n] of streets) {
+      if (live().length < 2) break;
+      players.forEach(p => p.bet = 0); currentBet = 0; render();
+      await sleep(350);
+      drawCard(); // burn
+      for (let k = 0; k < n; k++) { board.push(drawCard()); renderBoard(); LB.sfx.card(); await sleep(220); }
+      setMsg(LB.t(name));
+      if (players.filter(canAct).length >= 2) await bettingRound(next(dealer), false);
+      else await sleep(700);
+    }
+    await showdown(startStack);
+  }
+
+  async function showdown(startStack) {
+    players.forEach(p => p.bet = 0); currentBet = 0;
+    const contenders = live();
+    const you = players[0];
+    const yourBet = you.contrib;
+    let ledgerRes, msg, msgCls = '';
+    if (contenders.length === 1) {
+      const w = contenders[0], pot = potSize();
+      w.stack += pot; w.el.classList.add('won');
+      msg = w.human ? LB.t('pk_you_win_fold', { n: pot.toLocaleString() }) : LB.t('pk_wins_fold', { name: w.name, n: pot.toLocaleString() });
+      ledgerRes = you.folded ? { k: 'pk_res_fold' } : { k: 'pk_res_fw' };
+    } else {
+      contenders.forEach(p => { if (!p.human) p.cardEls.forEach((e, i) => Cards.reveal(e, p.cards[i])); p.rank = best([...p.cards, ...board]); seatPart(p, '.hand-name').textContent = LB.t('h' + p.rank[0]); });
+      LB.sfx.flip(); await sleep(600);
+      // side pots
+      const levels = [...new Set(players.filter(p => p.contrib > 0).map(p => p.contrib))].sort((a, b) => a - b);
+      let prev = 0; const pots = [];
+      for (const lvl of levels) {
+        let amount = 0; players.forEach(p => amount += Math.min(p.contrib, lvl) - Math.min(p.contrib, prev));
+        const elig = players.filter(p => !p.folded && p.contrib >= lvl);
+        if (elig.length) pots.push({ amount, elig }); else if (pots.length) pots[pots.length - 1].amount += amount;
+        prev = lvl;
+      }
+      const winnersAll = new Set(); let headline = null;
+      for (const pot of pots) {
+        let top = null, ws = [];
+        pot.elig.forEach(p => { const c = top ? cmp(p.rank, top) : 1; if (c > 0) { top = p.rank; ws = [p]; } else if (c === 0) ws.push(p); });
+        const share = Math.floor(pot.amount / ws.length); let rem = pot.amount - share * ws.length;
+        // odd chips go to the first winner left of the dealer
+        const order = []; let i = next(dealer); for (let k = 0; k < players.length; k++) { if (ws.includes(players[i])) order.push(players[i]); i = next(i); }
+        order.forEach(p => { p.stack += share + (rem-- > 0 ? 1 : 0); winnersAll.add(p); });
+        if (!headline) headline = { ws: order, amount: pot.amount, rank: top };
+      }
+      winnersAll.forEach(p => p.el.classList.add('won'));
+      if (headline.ws.length > 1) msg = LB.t('pk_split', { names: headline.ws.map(p => p.name).join(', ') });
+      else msg = LB.t(headline.ws[0].human ? 'pk_you_win' : 'pk_wins', { name: headline.ws[0].name, n: headline.amount.toLocaleString(), hand: LB.t('h' + headline.rank[0]) });
+      if (you.folded) ledgerRes = { k: 'pk_res_fold' };
+      else if (winnersAll.has(you)) ledgerRes = headline.ws.length > 1 && headline.ws.includes(you) ? { k: 'pk_res_split', h: you.rank[0] } : { k: 'pk_res_won', h: you.rank[0] };
+      else ledgerRes = { k: 'pk_res_lost', h: you.rank[0] };
+    }
+    players.forEach(p => p.contrib = 0);
+    const net = you.stack - startStack;
+    if (net > 0) { msgCls = 'win'; LB.sfx.win(); LB.burstAt(you.el, 50, 1); $('last').textContent = net.toLocaleString(); }
+    else if (net < 0 && !you.folded) { msgCls = 'lose'; LB.sfx.lose(); }
+    setMsg(msg, msgCls);
+    ledger.add({ bet: yourBet, net, res: ledgerRes });
+    running = false; save(); render(); resetLabels();
+    $('next').hidden = false; $('next').disabled = players[0].stack < BB;
+    if (players[0].stack < BB) setMsg(LB.t('pk_broke'), 'lose');
+  }
+
+  $('next').addEventListener('click', playHand);
+  $('refill').addEventListener('click', () => { players[0].stack = START; save(); render(); setMsg(LB.t('refilled')); $('next').hidden = false; $('next').disabled = false; });
+  $('sound').addEventListener('click', () => { LB.setSound(!LB.soundOn); render(); });
+  addEventListener('keydown', e => { if (e.code === 'Space' && !e.repeat && e.target.tagName !== 'BUTTON' && !running) { e.preventDefault(); playHand(); } });
+
+  players.forEach(p => { p.cards = []; p.cardEls = []; p.bet = 0; p.contrib = 0; });
+  render(); renderBoard(); lockActions(); resetLabels();
+  if (players[0].stack >= BB) { $('next').hidden = false; setMsg(LB.t('pk_next') + ' →'); }
+  else setMsg(LB.t('pk_broke'), 'lose');
+})();
+</script>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
+</body>
+</html>
