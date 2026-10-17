@@ -60,6 +60,15 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
 .table-scroll { overflow-x: auto; }
 .empty { color: var(--muted); font-size: 14px; margin: 0; }
 .note { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+.count-pill { font-family: var(--body); font-size: 14px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: #fff; vertical-align: middle; }
+.count-pill:empty { display: none; }
+.msgs { display: flex; flex-direction: column; gap: 10px; }
+.msg { border-radius: 14px; padding: 12px 14px; box-shadow: 0 0 0 2px var(--line); display: flex; flex-direction: column; gap: 6px; }
+.msg-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.msg-who { font-weight: 700; } .msg-who a { font-weight: 600; }
+.msg-meta { font-size: 13px; color: var(--muted); }
+.msg-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.45; }
+.msg-del { align-self: flex-end; padding: 6px 12px; font-size: 13px; }
 @media (max-width: 760px) { .cols, .cols.three { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 html:lang(vi) { --display: "Baloo 2", "Fredoka", system-ui, sans-serif; --body: "Baloo 2", system-ui, sans-serif; }
@@ -123,6 +132,11 @@ html:lang(vi) h1, html:lang(vi) h2 { font-weight: 800; }
       </div>
     </section>
 
+    <section class="panel" style="margin-top:18px">
+      <h2><span data-i18n="st_msgs">Messages</span> <span id="msgCount" class="count-pill"></span></h2>
+      <div class="msgs" id="msgs"></div>
+    </section>
+
     <p class="note" id="since" style="margin-top:14px"></p>
     <div style="margin-top:10px"><button class="ghost" id="logout" data-i18n="st_forget">Forget key on this device</button></div>
   </div>
@@ -131,10 +145,10 @@ html:lang(vi) h1, html:lang(vi) h2 { font-weight: 800; }
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const NAMES = { home: LB.t('g_home'), lobby: LB.t('g_lobby'), slots: LB.t('g_slots'), baccarat: LB.t('g_baccarat'), blackjack: LB.t('g_blackjack'), poker: LB.t('g_poker'), 'block-puzzle': LB.t('g_bp'), other: LB.t('g_other') };
+  const NAMES = { home: LB.t('g_home'), lobby: LB.t('g_lobby'), slots: LB.t('g_slots'), baccarat: LB.t('g_baccarat'), blackjack: LB.t('g_blackjack'), poker: LB.t('g_poker'), contact: LB.t('contact'), 'block-puzzle': LB.t('g_bp'), other: LB.t('g_other') };
   const tr = k => (LB.zh ? LB.t(k) : k);
   document.title = `${LB.t('site_name')} · ${LB.t('st_visitors')}`;
-  const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', poker: '#b56bff', 'block-puzzle': '#4fa8ff', other: '#999' };
+  const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', poker: '#b56bff', contact: '#ff5ea8', 'block-puzzle': '#4fa8ff', other: '#999' };
   const getKey = () => { try { return localStorage.getItem('pfh_admin_key') || ''; } catch { return ''; } };
   const setKey = k => { try { k ? localStorage.setItem('pfh_admin_key', k) : localStorage.removeItem('pfh_admin_key'); } catch {} };
   const fmt = n => Number(n || 0).toLocaleString();
@@ -184,6 +198,25 @@ html:lang(vi) h1, html:lang(vi) h2 { font-weight: 800; }
     bars($('devices'), s.devices, 4);
     bars($('os'), s.os, 6);
     bars($('browsers'), s.browsers, 6);
+    loadMessages();
+  }
+
+  async function loadMessages() {
+    let list = [];
+    try { const r = await fetch('api/messages', { headers: { 'x-admin-key': getKey() }, cache: 'no-store' }); if (r.ok) list = (await r.json()).messages || []; } catch {}
+    $('msgCount').textContent = list.length ? list.length : '';
+    const box = $('msgs');
+    if (!list.length) { box.innerHTML = `<p class="empty">${LB.t('st_nomsgs')}</p>`; return; }
+    box.innerHTML = list.map(m => `<article class="msg" data-id="${esc(m.id)}">
+      <div class="msg-top"><span class="msg-who">${esc(m.name || LB.t('st_anon'))}${m.email ? ` · <a href="mailto:${esc(m.email)}">${esc(m.email)}</a>` : ''}</span>
+      <span class="msg-meta">${new Date(m.at).toLocaleString(LB.zh ? 'zh-CN' : LB.vi ? 'vi-VN' : undefined)} · ${esc(tr(m.place || ''))} · ${esc(tr(m.device || ''))}</span></div>
+      <div class="msg-body">${esc(m.msg)}</div>
+      <button class="ghost msg-del" type="button">${LB.t('st_del')}</button></article>`).join('');
+    box.querySelectorAll('.msg-del').forEach(b => b.addEventListener('click', async () => {
+      const art = b.closest('.msg');
+      try { await fetch('api/messages/' + art.dataset.id, { method: 'DELETE', headers: { 'x-admin-key': getKey() } }); } catch {}
+      loadMessages();
+    }));
   }
 
   function drawChart(days) {

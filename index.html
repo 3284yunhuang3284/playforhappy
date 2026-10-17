@@ -114,6 +114,12 @@ h1 .ch.jump { animation: jump .55s cubic-bezier(.3,1.8,.5,1); }
 .bulb { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--b); border: 1.5px solid rgba(42,20,80,.55); opacity: .35; transform: scale(.75); animation: chase 1.4s linear infinite; animation-delay: var(--dl); }
 @keyframes chase { 0%, 100% { opacity: .22; transform: scale(.7); box-shadow: none; } 12% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px 3px var(--b), 0 0 2px #fff inset; } 30% { opacity: .55; transform: scale(.9); } }
 .tile:hover .bulb { animation-duration: .7s; }
+.contact-pill { position: fixed; z-index: 75; top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px 0 9px; border-radius: 999px; background: var(--paper); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); color: var(--ink); text-decoration: none; font: 700 14px var(--body); letter-spacing: .02em; }
+.contact-pill svg { width: 20px; height: 20px; }
+.contact-pill:hover { transform: translateY(-1px) rotate(-2deg); }
+.contact-pill:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.foot-contact { display: inline-block; margin-left: 6px; padding: 6px 14px; border-radius: 999px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; border: 2px solid var(--ink); }
+.foot-contact:hover { background: var(--pink); }
 footer { text-align: center; font-weight: 600; font-size: 15px; }
 footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,253,245,.85); border: 2px solid var(--ink); }
 
@@ -153,6 +159,7 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
 </head>
 <body data-page="home">
 <div class="doodles" aria-hidden="true" id="doodles"></div>
+<a class="contact-pill" href="contact.html"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="#fff" stroke="#2a1450" stroke-width="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5" fill="none" stroke="#2a1450" stroke-width="2" stroke-linejoin="round"/></svg><span data-i18n="contact">Contact</span></a>
 
 <div class="wrap">
   <header>
@@ -216,7 +223,7 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
     </a></li>
   </ul>
 
-  <footer><span data-i18n="footer">Pretend money only. Real smiles guaranteed.</span></footer>
+  <footer><span data-i18n="footer">Pretend money only. Real smiles guaranteed.</span> <a class="foot-contact" href="contact.html" data-i18n="contact">Contact</a></footer>
 </div>
 
 <a class="badge" href="stats.html" aria-label="Visitor stats" data-i18n-aria="badge_aria">

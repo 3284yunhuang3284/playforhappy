@@ -1,6 +1,6 @@
 // Play For Happy offline support.
 // Change VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'play-for-happy-v5';
+const VERSION = 'play-for-happy-v6';
 const APP_FILES = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const APP_FILES = [
   './blackjack.html',
   './poker.html',
   './block-puzzle.html',
+  './contact.html',
   './common.js',
   './cards.js',
   './table.css',

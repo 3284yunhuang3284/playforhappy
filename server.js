@@ -15,7 +15,15 @@ const TZ = process.env.STATS_TIMEZONE || 'America/Los_Angeles';
 const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'stats.json');
 const KEEP_DAYS = 120;
-const PAGES = ['home', 'lobby', 'slots', 'poker', 'baccarat', 'blackjack', 'block-puzzle'];
+const PAGES = ['home', 'lobby', 'slots', 'poker', 'baccarat', 'blackjack', 'block-puzzle', 'contact'];
+const MSG_FILE = path.join(DATA_DIR, 'messages.json');
+let messages = [];
+try { messages = JSON.parse(fs.readFileSync(MSG_FILE, 'utf8')); } catch { /* none yet */ }
+function saveMessages() {
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(MSG_FILE + '.tmp', JSON.stringify(messages)); fs.renameSync(MSG_FILE + '.tmp', MSG_FILE); }
+  catch (e) { console.error('Could not save messages:', e.message); }
+}
+const recentSenders = new Map();   // ip -> [timestamps] for simple spam protection
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -218,6 +226,43 @@ http.createServer((req, res) => {
       res.writeHead(204); res.end();
     });
     return;
+  }
+
+  if (url === '/api/contact' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; if (body.length > 8192) req.destroy(); });
+    req.on('end', () => {
+      let m = {};
+      try { m = JSON.parse(body || '{}'); } catch { return sendJSON(res, 400, { error: 'bad request' }); }
+      if (m.website) return sendJSON(res, 200, { ok: true });            // hidden field filled in: a bot
+      const text = String(m.msg || '').trim().slice(0, 2000);
+      if (!text) return sendJSON(res, 400, { error: 'empty' });
+      const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+      const now = Date.now(), hour = 3600000;
+      const times = (recentSenders.get(ip) || []).filter(t => now - t < hour);
+      if (times.length >= 5) return sendJSON(res, 429, { error: 'too many' });
+      times.push(now); recentSenders.set(ip, times);
+      messages.push({
+        id: crypto.randomBytes(6).toString('hex'), at: new Date().toISOString(),
+        name: String(m.name || '').trim().slice(0, 80), email: String(m.email || '').trim().slice(0, 120),
+        msg: text, lang: String(m.lang || '').slice(0, 5), place: placeOf(req.headers, ''), device: parseUA(String(req.headers['user-agent'] || '')).device
+      });
+      if (messages.length > 1000) messages = messages.slice(-1000);
+      saveMessages();
+      sendJSON(res, 200, { ok: true });
+    });
+    return;
+  }
+
+  if (url === '/api/messages' && req.method === 'GET') {
+    if (!keyOk(req.headers['x-admin-key'])) return sendJSON(res, ADMIN_KEY ? 401 : 503, { error: 'locked' });
+    return sendJSON(res, 200, { messages: messages.slice().reverse() });
+  }
+  if (url.startsWith('/api/messages/') && req.method === 'DELETE') {
+    if (!keyOk(req.headers['x-admin-key'])) return sendJSON(res, ADMIN_KEY ? 401 : 503, { error: 'locked' });
+    const id = url.split('/').pop();
+    messages = messages.filter(x => x.id !== id); saveMessages();
+    return sendJSON(res, 200, { ok: true });
   }
 
   if (url === '/api/count' && req.method === 'GET') {
