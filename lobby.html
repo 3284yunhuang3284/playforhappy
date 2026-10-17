@@ -50,6 +50,10 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 .num { position: absolute; top: -14px; left: -10px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 20px; box-shadow: 2px 2px 0 var(--ink); }
 .preview { height: 130px; border-radius: 16px; border: 3px solid var(--ink); background: linear-gradient(160deg, var(--a), var(--b)); display: grid; place-items: center; overflow: hidden; position: relative; }
 .preview svg { height: 82%; width: auto; max-width: 92%; }
+.preview.table { height: 160px; background: radial-gradient(ellipse at 50% 0%, #5a1a2a, #26070f 75%); }
+.preview.table::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(45deg, rgba(255,210,63,.06) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255,210,63,.05) 0 6px, transparent 6px 14px); }
+.preview.table svg { position: relative; z-index: 1; width: 100%; height: 100%; max-width: none; }
+.card:hover .preview.table svg { animation: none; }
 .card:hover .preview svg { animation: jiggle .5s ease-in-out infinite; }
 @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-5deg) scale(1.05); } 75% { transform: rotate(5deg) scale(1.05); } }
 .card h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 5vw, 28px); line-height: 1; letter-spacing: .02em; }
@@ -64,9 +68,9 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 </head>
 <body data-page="lobby">
 <div class="wrap">
-  <a class="back" href="./">&larr; Home</a>
+  <a class="back" href="./" data-i18n="back_home">&larr; Home</a>
   <header>
-    <h1 id="title">Pick a table</h1>
+    <h1 id="title" data-i18n="lob_pick">Pick a table</h1>
     <p class="sub" id="sub"></p>
     <div class="bank" id="bank"></div>
   </header>
@@ -77,41 +81,126 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 (() => {
   const g = new URLSearchParams(location.search).get('g');
   const GAMES = {
-    slots: { title: 'Slot Machines', sub: 'Six machines. Zero real money. Infinite silliness.', page: 'slots.html', param: 'm', cols: 3, sit: 'Spin!' },
-    baccarat: { title: 'Baccarat', sub: 'Four tables. Pick the one with the snacks.', page: 'baccarat.html', param: 't', cols: 2, sit: 'Sit down!' },
-    blackjack: { title: 'Blackjack', sub: 'Four tables. The dealer promises not to quack.', page: 'blackjack.html', param: 't', cols: 2, sit: 'Sit down!' }
+    slots: { title: 't_slots', sub: 'lob_slots_sub', page: 'slots.html', param: 'm', cols: 3, sit: 'lob_spin' },
+    baccarat: { title: 't_bac', sub: 'lob_bac_sub', page: 'baccarat.html', param: 't', cols: 2, sit: 'lob_sit' },
+    blackjack: { title: 't_bj', sub: 'lob_bj_sub', page: 'blackjack.html', param: 't', cols: 2, sit: 'lob_sit' }
   };
   const G = GAMES[g];
   const grid = document.getElementById('grid');
   if (!G) {
-    document.getElementById('title').textContent = 'Oops!';
-    document.getElementById('sub').textContent = 'That game wandered off.';
-    grid.outerHTML = '<p class="missing"><a href="./">Go back home</a> and pick a game.</p>';
+    document.getElementById('title').textContent = LB.t('lob_oops');
+    document.getElementById('sub').textContent = LB.t('lob_lost');
+    grid.outerHTML = `<p class="missing"><a href="./">${LB.t('lob_gohome')}</a></p>`;
     return;
   }
-  document.title = `Play For Happy ${G.title}`;
-  document.getElementById('title').textContent = G.title;
-  document.getElementById('sub').textContent = G.sub;
+  document.title = `${LB.t('site_name')} · ${LB.t(G.title)}`;
+  document.getElementById('title').textContent = LB.t(G.title);
+  document.getElementById('sub').textContent = LB.t(G.sub);
   grid.style.setProperty('--cols', G.cols);
 
   const bankKey = { baccarat: 'bac_credits', blackjack: 'bj_credits' }[g];
-  if (bankKey) document.getElementById('bank').innerHTML = `Your chips: <b>${Math.round(LB.get(bankKey, 1000)).toLocaleString()}</b>`;
+  if (bankKey) document.getElementById('bank').innerHTML = `${LB.t('lob_chips')} <b>${Math.round(LB.get(bankKey, 1000)).toLocaleString()}</b>`;
 
-  const slotArt = (a, b) => `<svg viewBox="0 0 120 100" aria-hidden="true"><rect x="6" y="6" width="108" height="88" rx="16" fill="#fffdf5" stroke="#2a1450" stroke-width="4"/><rect x="16" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="47" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="78" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><g font-family="Luckiest Guy, Impact, sans-serif" font-size="24" text-anchor="middle" fill="${b}" stroke="#2a1450" stroke-width="1.5" paint-order="stroke"><text x="29" y="58">7</text><text x="60" y="58">7</text><text x="91" y="58">7</text></g><rect x="30" y="80" width="60" height="9" rx="4.5" fill="${a}" stroke="#2a1450" stroke-width="2.5"/></svg>`;
-  const tableArt = () => `<svg viewBox="0 0 140 90" aria-hidden="true"><ellipse cx="70" cy="50" rx="64" ry="34" fill="rgba(0,0,0,.18)" stroke="#2a1450" stroke-width="3"/><ellipse cx="70" cy="50" rx="52" ry="24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="5 4"/><g transform="rotate(-10 58 44)"><rect x="44" y="22" width="26" height="36" rx="4" fill="#fff" stroke="#2a1450" stroke-width="2.5"/><text x="49" y="36" font-family="Luckiest Guy, Impact" font-size="11" fill="#ff2d55">A</text></g><g transform="rotate(10 84 44)"><rect x="70" y="22" width="26" height="36" rx="4" fill="#fff" stroke="#2a1450" stroke-width="2.5"/><text x="75" y="36" font-family="Luckiest Guy, Impact" font-size="11" fill="#2a1450">K</text></g><circle cx="34" cy="64" r="7" fill="#ffd23f" stroke="#2a1450" stroke-width="2.5"/><circle cx="106" cy="66" r="7" fill="#ff5ea8" stroke="#2a1450" stroke-width="2.5"/></svg>`;
+  // ---------- slot previews: each machine shows its own mix of symbols ----------
+  const SYM = {
+    cherry: '<path d="M10 18C12 9 17 4 24 2M20 19C20 11 22 6 24 2" stroke="#3f6b25" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="9" cy="22" r="7" fill="#e0213a" stroke="#2a1450" stroke-width="2"/><circle cx="21" cy="23" r="7" fill="#e0213a" stroke="#2a1450" stroke-width="2"/>',
+    bell: '<path d="M14 2c-7 0-11 6-11 13v7l-3 4h28l-3-4v-7C25 8 21 2 14 2z" fill="#ffc93c" stroke="#2a1450" stroke-width="2.4" stroke-linejoin="round"/><circle cx="14" cy="29" r="3.5" fill="#2a1450"/>',
+    diamond: '<path d="M2 9l5-7h14l5 7-12 20z" fill="#5ec8f2" stroke="#2a1450" stroke-width="2.4" stroke-linejoin="round"/><path d="M2 9h24M7 2l7 7 7-7M14 9v20" stroke="#1a5f8a" stroke-width="1.5" fill="none"/>',
+    lemon: '<ellipse cx="14" cy="17" rx="13" ry="9.5" fill="#ffd93b" stroke="#2a1450" stroke-width="2.2"/><path d="M8 13q5-3 10-1" stroke="#fff8c2" stroke-width="2.5" fill="none" stroke-linecap="round"/>',
+    seven: '<path d="M2 3h24v6L13 31H5L17 9H2z" fill="#ff2d55" stroke="#2a1450" stroke-width="2.4" stroke-linejoin="round"/>',
+    bar: '<rect x="0" y="9" width="28" height="15" rx="3" fill="#2a1450"/><text x="14" y="21" text-anchor="middle" font-family="Luckiest Guy, Impact, sans-serif" font-size="11" fill="#ffd23f">BAR</text>'
+  };
+  const MIX = { 1: ['cherry', 'seven', 'cherry'], 2: ['diamond', 'bell', 'diamond'], 3: ['lemon', 'cherry', 'bar'], 4: ['bell', 'diamond', 'cherry'], 5: ['bar', 'seven', 'bar'], 6: ['lemon', 'bell', 'lemon'] };
+  const slotArt = (t) => {
+    const mix = MIX[t.id] || MIX[1];
+    return `<svg viewBox="0 0 120 100" aria-hidden="true"><rect x="6" y="6" width="108" height="88" rx="16" fill="#fffdf5" stroke="#2a1450" stroke-width="4"/>
+      ${[16, 47, 78].map((x, i) => `<rect x="${x}" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><g transform="translate(${x + 13} 49) scale(.72) translate(-14 -16)">${SYM[mix[i]]}</g>`).join('')}
+      <line x1="12" y1="49" x2="108" y2="49" stroke="${t.b}" stroke-width="1.5" stroke-dasharray="4 3" opacity=".7"/>
+      <rect x="30" y="80" width="60" height="9" rx="4.5" fill="${t.a}" stroke="#2a1450" stroke-width="2.5"/></svg>`;
+  };
+
+  // ---------- realistic top-down casino tables ----------
+  const P = (r, deg) => [150 + r * Math.cos(deg * Math.PI / 180), 8 + r * Math.sin(deg * Math.PI / 180)];
+  const arcPath = r => `M ${150 - r} 8 A ${r} ${r} 0 0 0 ${150 + r} 8`;
+  function miniCard(x, y, rot, face, red) {
+    return `<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-6" y="-8.5" width="12" height="17" rx="1.6" fill="${face ? '#fff' : '#b3122a'}" stroke="${face ? '#999' : '#fff'}" stroke-width=".8"/>${face ? `<text x="-4" y="-2" font-family="Georgia, serif" font-size="6" font-weight="700" fill="${red ? '#d0142c' : '#111'}">${face}</text>` : '<path d="M-4 -6.5 L4 6.5 M4 -6.5 L-4 6.5" stroke="rgba(255,255,255,.5)" stroke-width=".8"/>'}</g>`;
+  }
+  function stack(x, y, colors) {
+    return colors.map((c, i) => `<g transform="translate(${x} ${y - i * 1.6})"><ellipse rx="5.4" ry="3" fill="${c}" stroke="rgba(0,0,0,.45)" stroke-width=".6"/><ellipse rx="3.6" ry="1.9" fill="none" stroke="#fff" stroke-width=".7" stroke-dasharray="1.2 1.2"/></g>`).join('');
+  }
+  function chipTray() {
+    const cols = ['#e8263a', '#2f6bff', '#12925a', '#1d1a2e', '#ffd23f', '#a43ae0', '#e8263a', '#2f6bff', '#12925a', '#1d1a2e'];
+    return `<rect x="104" y="0" width="92" height="17" rx="3" fill="#2b1608" stroke="#c99a3a" stroke-width="1.2"/>` +
+      cols.map((c, i) => `<rect x="${107 + i * 8.8}" y="2" width="7" height="13" rx="2" fill="${c}" stroke="rgba(0,0,0,.4)" stroke-width=".5"/><rect x="${107 + i * 8.8}" y="5" width="7" height="1" fill="rgba(255,255,255,.5)"/><rect x="${107 + i * 8.8}" y="10" width="7" height="1" fill="rgba(255,255,255,.5)"/>`).join('');
+  }
+  function tableBase(t, uid) {
+    return `<defs>
+      <radialGradient id="felt${uid}" cx="50%" cy="0%" r="95%"><stop offset="0" stop-color="${t.a}"/><stop offset="1" stop-color="${t.b}"/></radialGradient>
+      <linearGradient id="rail${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a5326"/><stop offset=".55" stop-color="#5a3013"/><stop offset="1" stop-color="#2e1607"/></linearGradient>
+      <linearGradient id="pad${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a1d0e"/><stop offset="1" stop-color="#1a0b04"/></linearGradient>
+      <path id="a1${uid}" d="${arcPath(122)}"/><path id="a2${uid}" d="${arcPath(101)}"/><path id="a3${uid}" d="${arcPath(84)}"/><path id="a4${uid}" d="${arcPath(66)}"/>
+    </defs>
+    <path d="M -6 8 A 156 156 0 0 0 306 8 Z" fill="url(#pad${uid})"/>
+    <path d="M 3 8 A 147 147 0 0 0 297 8 Z" fill="url(#rail${uid})"/>
+    <path d="M 5 8 A 145 145 0 0 0 295 8" fill="none" stroke="rgba(255,220,160,.35)" stroke-width="1"/>
+    <path d="M 12 8 A 138 138 0 0 0 288 8 Z" fill="url(#felt${uid})"/>
+    <rect x="0" y="0" width="300" height="9" fill="#24110a"/>`;
+  }
+  function baccaratTable(t) {
+    const u = 'b' + t.id;
+    const seats = [1, 2, 3, 5, 6, 7, 8];   // no seat 4, a lucky-number tradition
+    let s = `<svg viewBox="0 0 300 164" aria-hidden="true">${tableBase(t, u)}`;
+    s += `<path d="${arcPath(130)}" fill="none" stroke="rgba(255,236,170,.7)" stroke-width="1.2"/><path d="${arcPath(110)}" fill="none" stroke="rgba(255,236,170,.7)" stroke-width="1.2"/><path d="${arcPath(92)}" fill="none" stroke="rgba(255,236,170,.7)" stroke-width="1.2"/><path d="${arcPath(74)}" fill="none" stroke="rgba(255,236,170,.55)" stroke-width="1"/>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="9.5" font-weight="700" letter-spacing="2.5" fill="#ffd6d6"><textPath href="#a1${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '庄  ·  庄  ·  庄  ·  庄  ·  庄' : 'BANKER  ·  BANKER  ·  BANKER  ·  BANKER'}</textPath></text>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="9" font-weight="700" letter-spacing="2.5" fill="#d8e6ff"><textPath href="#a2${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '闲  ·  闲  ·  闲  ·  闲' : 'PLAYER  ·  PLAYER  ·  PLAYER'}</textPath></text>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="7" letter-spacing="1.6" fill="#fff3c2"><textPath href="#a3${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '和  1 赔 8' : 'TIE PAYS 8 TO 1'}</textPath></text>`;
+    seats.forEach((n, i) => {
+      const deg = 162 - i * (144 / 6); const [x, y] = P(130, deg); const [cx, cy] = P(118, deg);
+      s += `<circle cx="${x}" cy="${y}" r="6.5" fill="rgba(0,0,0,.25)" stroke="rgba(255,236,170,.85)" stroke-width="1"/><text x="${x}" y="${y + 2.6}" text-anchor="middle" font-family="Georgia, serif" font-size="7" font-weight="700" fill="#fff3c2">${n}</text>`;
+      if (i % 3 === 1) s += stack(cx, cy, ['#e8263a', '#2f6bff', '#ffd23f'].slice(0, 2 + (i % 2)));
+    });
+    s += chipTray();
+    s += `<rect x="232" y="10" width="28" height="15" rx="2" fill="#141414" stroke="#c99a3a" stroke-width="1"/><path d="M234 12 h24 v6 h-24z" fill="#b3122a"/>`;
+    s += `<rect x="42" y="11" width="22" height="13" rx="2" fill="rgba(0,0,0,.35)" stroke="rgba(255,236,170,.6)" stroke-width=".8"/>`;
+    s += `<text x="122" y="36" text-anchor="middle" font-family="Georgia, serif" font-size="6.5" letter-spacing="1" fill="#d8e6ff">${LB.zh ? '闲' : 'PLAYER'}</text><text x="178" y="36" text-anchor="middle" font-family="Georgia, serif" font-size="6.5" letter-spacing="1" fill="#ffd6d6">${LB.zh ? '庄' : 'BANKER'}</text>`;
+    s += miniCard(115, 50, -6, '9', true) + miniCard(129, 50, 5, 'K', false) + miniCard(171, 50, -4, '7', false) + miniCard(185, 50, 6, '2', true);
+    return s + '</svg>';
+  }
+  function blackjackTable(t) {
+    const u = 'j' + t.id;
+    let s = `<svg viewBox="0 0 300 164" aria-hidden="true">${tableBase(t, u)}`;
+    s += `<path d="${arcPath(112)}" fill="none" stroke="rgba(255,236,170,.75)" stroke-width="1.2"/><path d="${arcPath(97)}" fill="none" stroke="rgba(255,236,170,.75)" stroke-width="1.2"/>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="7.5" letter-spacing="2" fill="#fff3c2"><textPath href="#a2${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '保险  1 赔 2' : 'INSURANCE PAYS 2 TO 1'}</textPath></text>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="10" font-weight="700" letter-spacing="1.6" fill="#ffd23f"><textPath href="#a3${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '黑杰克  3 赔 2' : 'BLACKJACK PAYS 3 TO 2'}</textPath></text>`;
+    s += `<text font-family="Georgia, 'Times New Roman', serif" font-size="5.6" letter-spacing=".8" fill="rgba(255,255,255,.85)"><textPath href="#a4${u}" startOffset="50%" text-anchor="middle">${LB.zh ? '庄家 16 点以下必须要牌，17 点停牌' : 'DEALER MUST DRAW TO 16 AND STAND ON ALL 17s'}</textPath></text>`;
+    for (let i = 0; i < 7; i++) {
+      const deg = 160 - i * (140 / 6); const [x, y] = P(127, deg);
+      s += `<circle cx="${x}" cy="${y}" r="9" fill="rgba(0,0,0,.18)" stroke="rgba(255,236,170,.9)" stroke-width="1.2"/>`;
+      if (i === 1 || i === 3 || i === 5) {
+        s += stack(x, y + 1, i === 3 ? ['#1d1a2e', '#e8263a', '#e8263a'] : ['#12925a', '#2f6bff']);
+        const [cx, cy] = P(108, deg);
+        s += miniCard(cx - 4, cy, deg - 90 - 6, i === 3 ? 'A' : '8', i !== 3) + miniCard(cx + 4, cy - 1, deg - 90 + 6, i === 1 ? 'Q' : 'K', i === 5);
+      }
+    }
+    s += chipTray();
+    s += `<rect x="232" y="10" width="28" height="15" rx="2" fill="#141414" stroke="#c99a3a" stroke-width="1"/><path d="M234 12 h24 v6 h-24z" fill="#b3122a"/>`;
+    s += miniCard(142, 34, -3, 'K', true) + miniCard(157, 34, 4, null, false);
+    return s + '</svg>';
+  }
 
   grid.innerHTML = LB.TABLES[g].map(t => {
     let limits;
     if (g === 'slots') {
       const key = (t.id > 1 ? `m${t.id}_` : '') + 'lb_credits';
-      limits = `Credits ${Math.round(LB.get(key, 1000)).toLocaleString()}`;
-    } else limits = `Chips ${t.chips[0]}–${t.chips[t.chips.length - 1]}`;
+      limits = LB.t('lob_credits', { n: Math.round(LB.get(key, 1000)).toLocaleString() });
+    } else limits = LB.t('lob_range', { a: t.chips[0], b: t.chips[t.chips.length - 1] });
+    const art = g === 'slots' ? slotArt(t) : g === 'baccarat' ? baccaratTable(t) : blackjackTable(t);
     return `<li><a class="card" style="--a:${t.a};--b:${t.b}" href="${G.page}?${G.param}=${t.id}">
       <span class="num">${t.id}</span>
-      <div class="preview">${g === 'slots' ? slotArt(t.a, t.b) : tableArt()}</div>
-      <h2>${t.name}</h2>
-      <p>${t.joke}</p>
-      <div class="meta"><span class="limits">${limits}</span><span class="sit">${G.sit}</span></div>
+      <div class="preview${g === 'slots' ? '' : ' table'}">${art}</div>
+      <h2>${LB.tn(t)}</h2>
+      <p>${LB.tj(t)}</p>
+      <div class="meta"><span class="limits">${limits}</span><span class="sit">${LB.t(G.sit)}</span></div>
     </a></li>`;
   }).join('');
 })();

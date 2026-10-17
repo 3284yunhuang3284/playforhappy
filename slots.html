@@ -278,17 +278,17 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
 </style>
 </head>
 <body data-page="slots">
-<a class="home-link" href="lobby.html?g=slots">&larr; Machines</a>
+<a class="home-link" href="lobby.html?g=slots" data-i18n="back_machines">&larr; Machines</a>
 
 
 <canvas id="fx" aria-hidden="true"></canvas>
 <div id="flash" aria-hidden="true"></div>
-<div class="pig-pop" id="pigPop" hidden><div id="pigArt"></div><div class="tag">+1 PIGGY BANK!</div></div>
+<div class="pig-pop" id="pigPop" hidden><div id="pigArt"></div><div class="tag" data-i18n="tag_pig">+1 PIGGY BANK!</div></div>
 
 <main class="cabinet" id="cabinet">
   <header class="marquee">
     <div class="bulbs" id="bulbs"></div>
-    <h1>Play For Happy</h1>
+    <h1 data-i18n="site_name">Play For Happy</h1>
     <div class="sub" id="machineName">Line up symbols from the left reel</div>
   </header>
 
@@ -298,28 +298,28 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   </div>
 
   <div class="readout" aria-live="polite">
-    <div class="led"><span class="label">Credits</span><span class="num" id="credits">1000</span></div>
-    <div class="led"><span class="label">Total bet</span><span class="num" id="betShow">1</span></div>
-    <div class="led"><span class="label">Win</span><span class="num" id="lastWin">0</span></div>
+    <div class="led"><span class="label" data-i18n="credits">Credits</span><span class="num" id="credits">1000</span></div>
+    <div class="led"><span class="label" data-i18n="led_total">Total bet</span><span class="num" id="betShow">1</span></div>
+    <div class="led"><span class="label" data-i18n="win">Win</span><span class="num" id="lastWin">0</span></div>
   </div>
 
   <div class="meter" id="meter">
-    <span class="label">Lucky meter</span>
+    <span class="label" data-i18n="lucky_meter">Lucky meter</span>
     <div class="pips" id="pips"></div>
     <span class="meter-note" id="meterNote">5 spins to win</span>
   </div>
 
   <div class="pigs">
-    <span class="label">Rewards</span>
+    <span class="label" data-i18n="rewards">Rewards</span>
     <div class="pig-row" id="pigRow"></div>
   </div>
 
-  <div class="message" id="msg" role="status">Press spin to play</div>
+  <div class="message" id="msg" role="status" data-i18n="press_spin">Press spin to play</div>
 
   <div class="controls">
     <div class="group">
-      <span class="label">Columns</span>
-      <div class="chips" role="group" aria-label="Number of columns">
+      <span class="label" data-i18n="columns">Columns</span>
+      <div class="chips" role="group" aria-label="Number of columns" data-i18n-aria="cols_aria">
         <button class="chip col" id="col3" data-cols="3">3</button>
         <button class="chip col" id="col4" data-cols="4">4</button>
         <button class="chip col" id="col5" data-cols="5">5</button>
@@ -327,8 +327,8 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
       </div>
     </div>
     <div class="group">
-      <span class="label">Bet</span>
-      <div class="chips" role="group" aria-label="Bet size">
+      <span class="label" data-i18n="bet">Bet</span>
+      <div class="chips" role="group" aria-label="Bet size" data-i18n-aria="bet_aria">
         <button class="chip bet" id="bet1" data-bet="1">1</button>
         <button class="chip bet" id="bet5" data-bet="5">5</button>
         <button class="chip bet" id="bet10" data-bet="10">10</button>
@@ -337,19 +337,19 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     </div>
   </div>
 
-  <button class="spin" id="spin">SPIN</button>
+  <button class="spin" id="spin" data-i18n="spin">SPIN</button>
 
   <div class="tools">
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
-    <label class="vol" for="volume"><span class="label">Volume</span><input type="range" id="volume" min="0" max="100" value="85"></label>
-    <button class="tool" id="reset">Refill 1000 credits</button>
+    <label class="vol" for="volume"><span class="label" data-i18n="volume">Volume</span><input type="range" id="volume" min="0" max="100" value="85"></label>
+    <button class="tool" id="reset" data-i18n="refill_1000">Refill 1000 credits</button>
   </div>
 
-  <section class="paytable" aria-label="Paytable">
-    <h2>3 in a row from the left · pays × total bet</h2>
+  <section class="paytable" aria-label="Paytable" data-i18n-aria="paytable">
+    <h2 data-i18n="pay_h2">3 in a row from the left · pays × total bet</h2>
     <ul class="pays" id="pays"></ul>
     <div class="lens" id="lens"></div>
-    <p class="fine">Total bet = bet × number of columns. Longer runs multiply the pay. Two cherries from the left pay ×1. Spins follow a rhythm: 2 wins, 4 losses, 2 wins, 2 losses, then it repeats. Every 3 rounds of that rhythm brings a reward: a piggy bank (5 × total bet), then another piggy bank, then a gold cow (10 × total bet), and after 2 gold cows a monkey (20 × total bet). Your credits never drop below 900 while you play. Play credits only · Space to spin.</p>
+    <p class="fine" data-i18n="sl_fine">Total bet = bet × number of columns. Longer runs multiply the pay. Two cherries from the left pay ×1. Spins follow a rhythm: 2 wins, 4 losses, 2 wins, 2 losses, then it repeats. Every 3 rounds of that rhythm brings a reward: a piggy bank (5 × total bet), then another piggy bank, then a gold cow (10 × total bet), and after 2 gold cows a monkey (20 × total bet). Your credits never drop below 900 while you play. Play credits only · Space to spin.</p>
   </section>
 </main>
 
@@ -386,8 +386,8 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   const GLOBAL_KEYS = new Set(['lb_sound', 'lb_vol']);
   document.documentElement.style.setProperty('--cab-a', MACHINE.a);
   document.documentElement.style.setProperty('--cab-b', MACHINE.b);
-  document.getElementById('machineName').textContent = `Machine ${MACHINE.id} · ${MACHINE.name}`;
-  document.title = `Play For Happy · ${MACHINE.name}`;
+  document.getElementById('machineName').textContent = LB.t('machine_label', { id: MACHINE.id, name: LB.tn(MACHINE) });
+  document.title = `${LB.t('site_name')} · ${LB.tn(MACHINE)}`;
   const store = {
     get(k, d) { try { const v = localStorage.getItem((GLOBAL_KEYS.has(k) ? '' : MP) + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
     set(k, v) { try { localStorage.setItem((GLOBAL_KEYS.has(k) ? '' : MP) + k, JSON.stringify(v)); } catch {} }
@@ -498,7 +498,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   pays.innerHTML = [...SYMS].reverse().map(s => `<li data-key="${s.id}">${SVG[s.id]}<span class="x">×${s.pay}</span></li>`).join('');
   function renderLens(hitLen) {
     lens.innerHTML = Object.entries(LEN_MULT).map(([n, m]) =>
-      `<span class="len ${+n > cols ? 'off' : ''} ${+n === hitLen ? 'hit' : ''}">${n} in a row ×${m}</span>`).join('');
+      `<span class="len ${+n > cols ? 'off' : ''} ${+n === hitLen ? 'hit' : ''}">${LB.t('len_row', { n, m })}</span>`).join('');
   }
 
   // ---------- meter ----------
@@ -507,13 +507,13 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   function renderMeter() {
     if (cold) {
       [...pipsEl.children].forEach(p => p.classList.remove('on'));
-      $('meterNote').textContent = `Cooling · small win in ${untilWin()}`;
+      $('meterNote').textContent = LB.t('meter_cool', { n: untilWin() });
       $('meter').classList.remove('ready');
       return;
     }
     const left = untilWin();
     [...pipsEl.children].forEach((p, i) => p.classList.toggle('on', i < ROUND - left));
-    $('meterNote').textContent = left <= 1 ? 'Next spin wins!' : `Win in ${left} spins`;
+    $('meterNote').textContent = left <= 1 ? LB.t('meter_next') : LB.t('meter_in', { n: left });
     $('meter').classList.toggle('ready', left <= 1);
   }
 
@@ -777,7 +777,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     const el = $('pigPop');
     if (kind === 'monkey') {
       $('pigArt').innerHTML = MONKEY;
-      el.querySelector('.tag').textContent = `MONKEY ×${MONKEY_X}!`;
+      el.querySelector('.tag').textContent = LB.t('tag_monkey', { x: MONKEY_X });
       el.classList.remove('gold'); el.classList.add('monkey');
       el.hidden = true; void el.offsetWidth; el.hidden = false;
       el.querySelectorAll('svg, .tag').forEach(n => { n.style.animation = 'none'; void n.offsetWidth; n.style.animation = ''; });
@@ -795,7 +795,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     }
     el.classList.remove('monkey');
     $('pigArt').innerHTML = cow ? COW : PIG;
-    el.querySelector('.tag').textContent = cow ? '+1 GOLD COW!' : '+1 PIGGY BANK!';
+    el.querySelector('.tag').textContent = LB.t(cow ? 'tag_cow' : 'tag_pig');
     el.classList.toggle('gold', cow);
     el.hidden = true; void el.offsetWidth; el.hidden = false;
     el.querySelectorAll('svg, .tag').forEach(n => { n.style.animation = 'none'; void n.offsetWidth; n.style.animation = ''; });
@@ -830,10 +830,10 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     const miniPig = PIG.replace(/id="pgb"/g, '').replace(/url\(#pgb\)/g, '#ff9ec4');
     const miniCow = COW.replace(/id="cwg"/g, '').replace(/url\(#cwg\)/g, '#f5c542');
     $('pigRow').innerHTML =
-      `<span class="rew" title="Piggy banks: win 100 or more in one spin">${miniPig}<span class="pig-count">${pigs}</span></span>` +
-      `<span class="rew" title="Gold cows: win 200 or more in one spin">${miniCow}<span class="pig-count cow">${cows}</span></span>` +
-      `<span class="rew" title="Monkeys: win 300 or more in one spin, paid ×20">${MONKEY.replace(/id="mkg"/g, '').replace(/url\(#mkg\)/g, '#9a5a2c')}<span class="pig-count monkey">${monkeys}</span></span>` +
-      `<span class="empty">Next: ${({ pig: 'piggy bank', cow: 'gold cow', monkey: 'monkey ×20' })[REWARD_SEQ[rewardIdx % REWARD_SEQ.length]]} in ${spinsToReward()} spins</span>`;
+      `<span class="rew" title="${LB.t('rw_pig_t')}">${miniPig}<span class="pig-count">${pigs}</span></span>` +
+      `<span class="rew" title="${LB.t('rw_cow_t')}">${miniCow}<span class="pig-count cow">${cows}</span></span>` +
+      `<span class="rew" title="${LB.t('rw_monkey_t')}">${MONKEY.replace(/id="mkg"/g, '').replace(/url\(#mkg\)/g, '#9a5a2c')}<span class="pig-count monkey">${monkeys}</span></span>` +
+      `<span class="empty">${LB.t('next_reward', { r: LB.t('rw_' + REWARD_SEQ[rewardIdx % REWARD_SEQ.length]), n: spinsToReward() })}</span>`;
   }
 
   function celebrate(level, hitCells) {
@@ -866,13 +866,13 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     document.querySelectorAll('.bet').forEach(b => { b.setAttribute('aria-pressed', String(+b.dataset.bet === bet)); b.disabled = spinning; });
     document.querySelectorAll('.col').forEach(b => { b.setAttribute('aria-pressed', String(+b.dataset.cols === cols)); b.disabled = spinning; });
     $('spin').disabled = spinning || credits < totalBet();
-    $('sound').textContent = soundOn ? 'Sound on' : 'Sound off';
+    $('sound').textContent = LB.t(soundOn ? 'sound_on' : 'sound_off');
     $('sound').setAttribute('aria-pressed', String(soundOn));
-    if (!spinning && credits < totalBet()) { msg.textContent = credits === 0 ? 'Out of credits · refill below' : 'Lower your bet to keep playing'; msg.classList.remove('big'); }
+    if (!spinning && credits < totalBet()) { msg.textContent = LB.t(credits === 0 ? 'out_credits' : 'lower_bet'); msg.classList.remove('big'); }
     renderMeter();
   }
   function totalBet() { return bet * cols; }
-  function betMsg() { msg.textContent = `Bet ${bet} × ${cols} columns = ${totalBet()}`; msg.classList.remove('big'); }
+  function betMsg() { msg.textContent = LB.t('bet_msg', { b: bet, c: cols, t: totalBet() }); msg.classList.remove('big'); }
   function save() { store.set('lb_credits', credits); store.set('lb_bet2', bet); store.set('lb_cols', cols); store.set('lb_sound', soundOn); store.set('lb_dry', dry); store.set('lb_target', target); store.set('lb_vol', volume); store.set('lb_pigs', pigs); store.set('lb_cows', cows); store.set('lb_monkeys', monkeys); store.set('lb_runpigs', runPigs); store.set('lb_runcows', runCows); store.set('lb_cold', cold); store.set('lb_colddry', coldDry); store.set('lb_coldtarget', coldTarget); store.set('lb_winstreak', winStreak); store.set('lb_sincemonkey', spinsSinceMonkey); store.set('lb_pat', patPos); store.set('lb_cycles', cycleCount); store.set('lb_rewardidx', rewardIdx); store.set('lb_lossstreak', lossStreak); }
 
   const volEl = $('volume'); volEl.value = volume;
@@ -888,7 +888,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   $('sound').addEventListener('click', () => { soundOn = !soundOn; save(); updateUI(); if (soundOn) sfx.click(); });
   $('reset').addEventListener('click', () => {
     if (spinning) return; credits = START; endCool(); $('lastWin').textContent = 0;
-    msg.textContent = 'Refilled · good luck'; msg.classList.remove('big'); sfx.coin(); save(); updateUI();
+    msg.textContent = LB.t('refilled_luck'); msg.classList.remove('big'); sfx.coin(); save(); updateUI();
   });
   $('spin').addEventListener('click', spin);
   addEventListener('keydown', e => {
@@ -969,7 +969,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     clearFx();
     spinning = true; credits -= totalBet(); spinsSinceMonkey++;
     $('lastWin').textContent = 0;
-    msg.textContent = PATTERN[patPos] === 1 ? 'Lucky spin…' : 'Spinning…'; msg.classList.remove('big');
+    msg.textContent = LB.t(PATTERN[patPos] === 1 ? 'lucky_spin' : 'spinning'); msg.classList.remove('big');
     win.classList.remove('won');
     document.querySelectorAll('.pays li').forEach(li => li.classList.remove('hit'));
     renderLens();
@@ -1039,7 +1039,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
       credits += amount;
       const level = reward ? (reward === 'pig' ? 2 : 3) : res.mult >= 40 ? 3 : res.mult >= 10 ? 2 : 1;
       countUp($('lastWin'), amount, level === 1 ? 400 : 800); bumpNum($('credits'));
-      msg.textContent = monkey ? `MONKEY ×${MONKEY_X} · +${amount}` : level === 3 ? `MEGA WIN · +${amount}` : level === 2 ? `BIG WIN · +${amount}` : `WIN · +${amount}`;
+      msg.textContent = monkey ? LB.t('m_monkey', { x: MONKEY_X, n: amount }) : LB.t(level === 3 ? 'm_mega' : level === 2 ? 'm_big' : 'm_winsl', { n: amount });
       msg.classList.remove('big'); void msg.offsetWidth; msg.classList.add('big');
       win.classList.add('won');
       const cells = res.cells.map(i => reels[i].strip.children[1]);
@@ -1061,7 +1061,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
       lossStreak++; winStreak = 0;
       if (!cold) dry = Math.min(ROUND - 1, dry + 1);
       else coldDry = Math.min(COLD_ROUND - 1, coldDry + 1);
-      msg.textContent = untilWin() === 1 ? 'Next spin wins!' : 'No win · spin again';
+      msg.textContent = LB.t(untilWin() === 1 ? 'meter_next' : 'no_win');
       chase('idle');
     }
     checkCool();

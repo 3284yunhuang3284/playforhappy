@@ -64,71 +64,74 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
 @media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 </head>
-<body>
+<body data-page="stats">
 <div class="wrap">
   <header>
-    <h1>Play For Happy<small>Visitor stats · owner only</small></h1>
-    <a href="./">Back to games</a>
+    <h1><span data-i18n="site_name">Play For Happy</span><small data-i18n="st_sub">Visitor stats · owner only</small></h1>
+    <div style="display:flex;gap:10px;align-items:center"><span id="langSlot"></span><a href="./" data-i18n="st_back">Back to games</a></div>
   </header>
 
   <section class="panel" id="gatePanel">
-    <h2>Owner access</h2>
+    <h2 data-i18n="st_owner">Owner access</h2>
     <form class="gate" id="gate">
-      <input id="key" type="password" autocomplete="current-password" placeholder="Your ADMIN_KEY" aria-label="Admin key">
-      <button type="submit">Show stats</button>
+      <input id="key" type="password" autocomplete="current-password" placeholder="Your ADMIN_KEY" data-i18n-ph="st_key" aria-label="Admin key">
+      <button type="submit" data-i18n="st_show">Show stats</button>
     </form>
     <p class="err" id="err" hidden></p>
   </section>
 
   <div id="stats" hidden>
     <div class="tiles">
-      <div class="tile"><span class="k">Visitors today</span><span class="v" id="tVis">0</span><span class="s" id="tNew"></span></div>
-      <div class="tile"><span class="k">Page views today</span><span class="v" id="tHits">0</span><span class="s">pages opened</span></div>
-      <div class="tile"><span class="k">Last 7 days</span><span class="v" id="wVis">0</span><span class="s" id="wHits"></span></div>
-      <div class="tile"><span class="k">All time</span><span class="v" id="aVis">0</span><span class="s" id="aHits"></span></div>
+      <div class="tile"><span class="k" data-i18n="st_vtoday">Visitors today</span><span class="v" id="tVis">0</span><span class="s" id="tNew"></span></div>
+      <div class="tile"><span class="k" data-i18n="st_ptoday">Page views today</span><span class="v" id="tHits">0</span><span class="s" data-i18n="st_opened">pages opened</span></div>
+      <div class="tile"><span class="k" data-i18n="st_7">Last 7 days</span><span class="v" id="wVis">0</span><span class="s" id="wHits"></span></div>
+      <div class="tile"><span class="k" data-i18n="st_all">All time</span><span class="v" id="aVis">0</span><span class="s" id="aHits"></span></div>
     </div>
 
     <section class="panel" style="margin-top:18px">
-      <h2>Last 30 days</h2>
+      <h2 data-i18n="st_30">Last 30 days</h2>
       <div class="chart" id="chart"></div>
-      <div class="legend"><span style="--c: var(--accent)">Visitors</span><span style="--c: var(--accent2)">Page views</span></div>
+      <div class="legend"><span style="--c: var(--accent)" data-i18n="st_visitors">Visitors</span><span style="--c: var(--accent2)" data-i18n="st_pviews">Page views</span></div>
     </section>
 
     <section class="panel" style="margin-top:18px">
-      <h2>Games</h2>
+      <h2 data-i18n="st_games">Games</h2>
       <div class="table-scroll">
         <table class="games">
-          <thead><tr><th>Game</th><th class="num">Players</th><th class="num">Page views</th><th class="num">Today</th></tr></thead>
+          <thead><tr><th data-i18n="st_game">Game</th><th class="num" data-i18n="st_players">Players</th><th class="num" data-i18n="st_pviews">Page views</th><th class="num" data-i18n="st_today">Today</th></tr></thead>
           <tbody id="games"></tbody>
         </table>
       </div>
     </section>
 
     <section class="panel" style="margin-top:18px">
-      <h2>Where visitors came from</h2>
+      <h2 data-i18n="st_from">Where visitors came from</h2>
       <div class="cols">
-        <div><h3>Arrived from</h3><div class="list" id="sources"></div></div>
-        <div><h3>Country / region</h3><div class="list" id="places"></div></div>
+        <div><h3 data-i18n="st_arrived">Arrived from</h3><div class="list" id="sources"></div></div>
+        <div><h3 data-i18n="st_place">Country / region</h3><div class="list" id="places"></div></div>
       </div>
     </section>
 
     <section class="panel" style="margin-top:18px">
-      <h2>Devices</h2>
+      <h2 data-i18n="st_devices">Devices</h2>
       <div class="cols three">
-        <div><h3>Device type</h3><div class="list" id="devices"></div></div>
-        <div><h3>System</h3><div class="list" id="os"></div></div>
-        <div><h3>Browser</h3><div class="list" id="browsers"></div></div>
+        <div><h3 data-i18n="st_dtype">Device type</h3><div class="list" id="devices"></div></div>
+        <div><h3 data-i18n="st_os">System</h3><div class="list" id="os"></div></div>
+        <div><h3 data-i18n="st_browser">Browser</h3><div class="list" id="browsers"></div></div>
       </div>
     </section>
 
     <p class="note" id="since" style="margin-top:14px"></p>
-    <div style="margin-top:10px"><button class="ghost" id="logout">Forget key on this device</button></div>
+    <div style="margin-top:10px"><button class="ghost" id="logout" data-i18n="st_forget">Forget key on this device</button></div>
   </div>
 </div>
+<script src="common.js"></script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const NAMES = { home: 'Home page', lobby: 'Table lobbies', slots: 'Slot machines', baccarat: 'Baccarat', blackjack: 'Blackjack', 'block-puzzle': 'Block Puzzle', other: 'Other' };
+  const NAMES = { home: LB.t('g_home'), lobby: LB.t('g_lobby'), slots: LB.t('g_slots'), baccarat: LB.t('g_baccarat'), blackjack: LB.t('g_blackjack'), 'block-puzzle': LB.t('g_bp'), other: LB.t('g_other') };
+  const tr = k => (LB.zh ? LB.t(k) : k);
+  document.title = `${LB.t('site_name')} · ${LB.t('st_visitors')}`;
   const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', 'block-puzzle': '#4fa8ff', other: '#999' };
   const getKey = () => { try { return localStorage.getItem('pfh_admin_key') || ''; } catch { return ''; } };
   const setKey = k => { try { k ? localStorage.setItem('pfh_admin_key', k) : localStorage.removeItem('pfh_admin_key'); } catch {} };
@@ -139,7 +142,7 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
     $('err').hidden = true;
     let res;
     try { res = await fetch('api/stats', { headers: { 'x-admin-key': key }, cache: 'no-store' }); }
-    catch { return showErr('Could not reach the server. Visitor stats need the site running with npm start.'); }
+    catch { return showErr(LB.t('st_noserver')); }
     let body = {};
     try { body = await res.json(); } catch {}
     if (!res.ok) { if (res.status === 401) setKey(''); return showErr(body.error || 'The server did not return stats.'); }
@@ -149,31 +152,31 @@ table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
 
   function bars(el, obj, limit = 8) {
     const entries = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
-    if (!entries.length) { el.innerHTML = '<p class="empty">Nothing yet.</p>'; return; }
+    if (!entries.length) { el.innerHTML = `<p class="empty">${LB.t('st_nothing')}</p>`; return; }
     const total = entries.reduce((a, e) => a + e[1], 0);
     const shown = entries.slice(0, limit);
     const rest = entries.slice(limit).reduce((a, e) => a + e[1], 0);
-    if (rest) shown.push(['Everything else', rest]);
+    if (rest) shown.push([LB.t('st_else'), rest]);
     const max = Math.max(...shown.map(e => e[1]));
     el.innerHTML = shown.map(([k, v]) =>
-      `<div class="grow"><span class="nm" title="${esc(k)}">${esc(k)}</span><span class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></span><span class="n">${fmt(v)} <small>${Math.round(v / total * 100)}%</small></span></div>`).join('');
+      `<div class="grow"><span class="nm" title="${esc(tr(k))}">${esc(tr(k))}</span><span class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></span><span class="n">${fmt(v)} <small>${Math.round(v / total * 100)}%</small></span></div>`).join('');
   }
 
   function render(s) {
     $('gatePanel').hidden = true; $('stats').hidden = false;
     $('tVis').textContent = fmt(s.today.visitors);
-    $('tNew').textContent = `${fmt(s.today.newVisitors)} new today`;
+    $('tNew').textContent = LB.t('st_newtoday', { n: fmt(s.today.newVisitors) });
     $('tHits').textContent = fmt(s.today.visits);
     $('wVis').textContent = fmt(s.last7.visitors);
-    $('wHits').textContent = `visitors · ${fmt(s.last7.visits)} page views`;
+    $('wHits').textContent = LB.t('st_vpv', { n: fmt(s.last7.visits) });
     $('aVis').textContent = fmt(s.uniqueVisitors);
-    $('aHits').textContent = `visitors · ${fmt(s.totalVisits)} page views`;
-    $('since').textContent = `Counting since ${new Date(s.since).toLocaleDateString()} · days follow ${s.timezone} time · a visitor is one browser on one device. Source, region and device are recorded once, on each visitor's first visit.`;
+    $('aHits').textContent = LB.t('st_vpv', { n: fmt(s.totalVisits) });
+    $('since').textContent = LB.t('st_note', { d: new Date(s.since).toLocaleDateString(LB.zh ? 'zh-CN' : undefined), tz: s.timezone });
     drawChart(s.days);
     const games = (s.games || []);
     $('games').innerHTML = games.length ? games.map(g =>
       `<tr><td><span class="dot" style="--c:${DOT[g.page] || '#999'}"></span>${esc(NAMES[g.page] || g.page)}</td><td class="num">${fmt(g.visitors)}</td><td class="num">${fmt(g.views)}</td><td class="num">${fmt(g.today)}</td></tr>`).join('')
-      : '<tr><td colspan="4" class="empty">No visits recorded yet.</td></tr>';
+      : `<tr><td colspan="4" class="empty">${LB.t('st_novisits')}</td></tr>`;
     bars($('sources'), s.sources);
     bars($('places'), s.places);
     bars($('devices'), s.devices, 4);

@@ -47,37 +47,37 @@
 <body data-page="baccarat">
 <div class="wrap">
   <header class="topbar">
-    <a class="home-link" href="lobby.html?g=baccarat">&larr; Tables</a>
-    <div class="ttl"><h1>Baccarat</h1><span class="tname" id="tname"></span></div>
+    <a class="home-link" href="lobby.html?g=baccarat" data-i18n="back_tables">&larr; Tables</a>
+    <div class="ttl"><h1 data-i18n="t_bac">Baccarat</h1><span class="tname" id="tname"></span></div>
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
   </header>
 
   <section class="felt">
     <div class="sides">
       <div class="seat side player" id="sideP">
-        <div class="seat-label"><span class="name">Player</span><span class="total" id="totP"></span></div>
+        <div class="seat-label"><span class="name" data-i18n="player">Player</span><span class="total" id="totP"></span></div>
         <div class="cards" id="cardsP"></div>
       </div>
       <div class="seat side banker" id="sideB">
-        <div class="seat-label"><span class="name">Banker</span><span class="total" id="totB"></span></div>
+        <div class="seat-label"><span class="name" data-i18n="banker">Banker</span><span class="total" id="totB"></span></div>
         <div class="cards" id="cardsB"></div>
       </div>
     </div>
-    <div class="message" id="msg" role="status">Pick a chip, then tap where to bet</div>
+    <div class="message" id="msg" role="status" data-i18n="bac_pick">Pick a chip, then tap where to bet</div>
     <div class="spots">
-      <button class="spot player" id="spotP" data-k="P"><span class="nm">Player</span><span class="odds">PAYS 1 : 1</span><span class="amt" id="amtP"></span></button>
-      <button class="spot tie" id="spotT" data-k="T"><span class="nm">Tie</span><span class="odds">PAYS 8 : 1</span><span class="amt" id="amtT"></span></button>
-      <button class="spot banker" id="spotB" data-k="B"><span class="nm">Banker</span><span class="odds">PAYS 0.95 : 1</span><span class="amt" id="amtB"></span></button>
+      <button class="spot player" id="spotP" data-k="P"><span class="nm" data-i18n="player">Player</span><span class="odds" data-i18n="pays_p">PAYS 1 : 1</span><span class="amt" id="amtP"></span></button>
+      <button class="spot tie" id="spotT" data-k="T"><span class="nm" data-i18n="tie">Tie</span><span class="odds" data-i18n="pays_t">PAYS 8 : 1</span><span class="amt" id="amtT"></span></button>
+      <button class="spot banker" id="spotB" data-k="B"><span class="nm" data-i18n="banker">Banker</span><span class="odds" data-i18n="pays_b">PAYS 0.95 : 1</span><span class="amt" id="amtB"></span></button>
     </div>
   </section>
 
   <div class="readout" aria-live="polite">
-    <div class="led"><span class="label">Balance</span><span class="num" id="balance">1000</span></div>
-    <div class="led"><span class="label">Total bet</span><span class="num" id="bet">0</span></div>
-    <div class="led"><span class="label">Last win</span><span class="num" id="last">0</span></div>
+    <div class="led"><span class="label" data-i18n="led_balance">Balance</span><span class="num" id="balance">1000</span></div>
+    <div class="led"><span class="label" data-i18n="led_total">Total bet</span><span class="num" id="bet">0</span></div>
+    <div class="led"><span class="label" data-i18n="led_last">Last win</span><span class="num" id="last">0</span></div>
   </div>
 
-  <div class="chips" id="chips" role="group" aria-label="Chip value">
+  <div class="chips" id="chips" role="group" aria-label="Chip value" data-i18n-aria="chip_value">
     <button class="chip" data-v="10">10</button>
     <button class="chip sel" data-v="25">25</button>
     <button class="chip" data-v="50">50</button>
@@ -85,19 +85,19 @@
   </div>
 
   <div class="actions">
-    <button class="btn alt" id="clear">Clear</button>
-    <button class="btn" id="deal">Deal</button>
-    <button class="btn" id="rebet" hidden>Rebet &amp; deal</button>
-    <button class="btn alt" id="newbet" hidden>New bet</button>
+    <button class="btn alt" id="clear" data-i18n="btn_clear">Clear</button>
+    <button class="btn" id="deal" data-i18n="btn_deal">Deal</button>
+    <button class="btn" id="rebet" hidden data-i18n="btn_rebet">Rebet &amp; deal</button>
+    <button class="btn alt" id="newbet" hidden data-i18n="btn_newbet">New bet</button>
   </div>
 
   <div class="road-wrap">
-    <div class="road-head"><span>Results</span><span class="counts"><span style="--c: var(--p)" id="cntP">Player 0</span><span style="--c: var(--b)" id="cntB">Banker 0</span><span style="--c: var(--t)" id="cntT">Tie 0</span></span></div>
-    <div class="road" id="road" aria-label="Recent results"></div>
+    <div class="road-head"><span data-i18n="results">Results</span><span class="counts"><span style="--c: var(--p)" id="cntP">Player 0</span><span style="--c: var(--b)" id="cntB">Banker 0</span><span style="--c: var(--t)" id="cntT">Tie 0</span></span></div>
+    <div class="road" id="road" aria-label="Recent results" data-i18n-aria="recent"></div>
   </div>
 
-  <div class="actions"><button class="tool" id="refill">Refill 1000 credits</button></div>
-  <p class="rules">8-deck shoe. Hand closest to 9 wins; tens and face cards count 0, aces 1. Third cards follow standard baccarat rules. On a tie, Player and Banker bets are returned. Play credits only.</p>
+  <div class="actions"><span id="langSlot"></span><button class="tool" id="refill" data-i18n="refill_1000">Refill 1000 credits</button></div>
+  <p class="rules" data-i18n="bac_rules">8-deck shoe. Hand closest to 9 wins; tens and face cards count 0, aces 1. Third cards follow standard baccarat rules. On a tie, Player and Banker bets are returned. Play credits only.</p>
 </div>
 
 <script src="common.js"></script>
@@ -109,8 +109,8 @@
   const T = LB.pick('baccarat', 't');
   document.documentElement.style.setProperty('--felt-a', T.a);
   document.documentElement.style.setProperty('--felt-b', T.b);
-  $('tname').textContent = `Table ${T.id} · ${T.name}`;
-  document.title = `Play For Happy Baccarat · ${T.name}`;
+  $('tname').textContent = LB.t('table_label', { id: T.id, name: LB.tn(T) });
+  document.title = `${LB.t('site_name')} · ${LB.t('t_bac')} · ${LB.tn(T)}`;
   document.querySelectorAll('.chip').forEach((c, i) => { c.dataset.v = T.chips[i]; c.textContent = T.chips[i]; });
   const MIN = T.chips[0];
   const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 40 : ms));
@@ -131,10 +131,10 @@
   function renderRoad() {
     const road = $('road'); road.innerHTML = '';
     const recent = history.slice(-72);
-    recent.forEach(r => { const d = document.createElement('div'); d.className = 'bead ' + r; d.textContent = r; road.appendChild(d); });
+    recent.forEach(r => { const d = document.createElement('div'); d.className = 'bead ' + r; d.textContent = LB.t('bead_' + r); road.appendChild(d); });
     road.parentElement.scrollLeft = road.scrollWidth;
     const c = k => history.filter(x => x === k).length;
-    $('cntP').textContent = `Player ${c('P')}`; $('cntB').textContent = `Banker ${c('B')}`; $('cntT').textContent = `Tie ${c('T')}`;
+    $('cntP').textContent = LB.t('cnt_p', { n: c('P') }); $('cntB').textContent = LB.t('cnt_b', { n: c('B') }); $('cntT').textContent = LB.t('cnt_t', { n: c('T') });
   }
   function updateUI() {
     $('balance').textContent = Math.round(balance * 100) / 100;
@@ -147,23 +147,23 @@
     $('rebet').hidden = !done || !lastBets; $('rebet').disabled = !lastBets || sum(lastBets) > balance;
     $('newbet').hidden = !done;
     $('refill').hidden = !(betting && balance < MIN && !sum(bets));
-    $('sound').textContent = LB.soundOn ? 'Sound on' : 'Sound off';
+    $('sound').textContent = LB.t(LB.soundOn ? 'sound_on' : 'sound_off');
   }
 
   document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { chipV = +c.dataset.v; LB.sfx.click(); updateUI(); }));
   document.querySelectorAll('.spot').forEach(s => s.addEventListener('click', () => {
     if (phase !== 'bet') return;
-    if (chipV > balance) { setMsg('Not enough credits for that chip'); return; }
-    bets[s.dataset.k] += chipV; balance -= chipV; LB.sfx.chip(); setMsg(`Bet ${sum(bets)}`); updateUI();
+    if (chipV > balance) { setMsg(LB.t('no_chip')); return; }
+    bets[s.dataset.k] += chipV; balance -= chipV; LB.sfx.chip(); setMsg(LB.t('bet_n', { n: sum(bets) })); updateUI();
   }));
-  $('clear').addEventListener('click', () => { balance += sum(bets); bets = { P: 0, B: 0, T: 0 }; LB.sfx.click(); setMsg('Pick a chip, then tap where to bet'); updateUI(); });
+  $('clear').addEventListener('click', () => { balance += sum(bets); bets = { P: 0, B: 0, T: 0 }; LB.sfx.click(); setMsg(LB.t('bac_pick')); updateUI(); });
   $('deal').addEventListener('click', () => play());
   $('rebet').addEventListener('click', () => {
     if (!lastBets || sum(lastBets) > balance) return;
     clearTable(); bets = { ...lastBets }; balance -= sum(bets); play();
   });
-  $('newbet').addEventListener('click', () => { clearTable(); phase = 'bet'; bets = { P: 0, B: 0, T: 0 }; setMsg('Pick a chip, then tap where to bet'); updateUI(); });
-  $('refill').addEventListener('click', () => { balance = START; save(); setMsg('Refilled to 1000'); updateUI(); });
+  $('newbet').addEventListener('click', () => { clearTable(); phase = 'bet'; bets = { P: 0, B: 0, T: 0 }; setMsg(LB.t('bac_pick')); updateUI(); });
+  $('refill').addEventListener('click', () => { balance = START; save(); setMsg(LB.t('refilled')); updateUI(); });
   $('sound').addEventListener('click', () => { LB.setSound(!LB.soundOn); updateUI(); });
 
   function clearTable() {
@@ -180,13 +180,13 @@
   async function play() {
     if (!sum(bets) || phase !== 'bet') return;
     phase = 'dealing'; lastBets = { ...bets }; save(); clearTable(); updateUI();
-    setMsg('Dealing…');
+    setMsg(LB.t('dealing'));
     const P = [], B = [];
     await deal('cardsP', P, 'totP'); await deal('cardsB', B, 'totB');
     await deal('cardsP', P, 'totP'); await deal('cardsB', B, 'totB');
     let p = tot(P), b = tot(B), p3 = null;
     if (p < 8 && b < 8) {
-      if (p <= 5) { setMsg('Player draws'); p3 = val(await deal('cardsP', P, 'totP')); p = tot(P); }
+      if (p <= 5) { setMsg(LB.t('p_draws')); p3 = val(await deal('cardsP', P, 'totP')); p = tot(P); }
       let bankerDraws;
       if (p3 === null) bankerDraws = b <= 5;
       else if (b <= 2) bankerDraws = true;
@@ -195,8 +195,8 @@
       else if (b === 5) bankerDraws = p3 >= 4 && p3 <= 7;
       else if (b === 6) bankerDraws = p3 === 6 || p3 === 7;
       else bankerDraws = false;
-      if (bankerDraws) { setMsg('Banker draws'); await deal('cardsB', B, 'totB'); b = tot(B); }
-    } else setMsg('Natural!');
+      if (bankerDraws) { setMsg(LB.t('b_draws')); await deal('cardsB', B, 'totB'); b = tot(B); }
+    } else setMsg(LB.t('natural'));
     const res = p > b ? 'P' : b > p ? 'B' : 'T';
     let back = 0;
     if (res === 'P') back = bets.P * 2;
@@ -210,13 +210,14 @@
     $('spot' + res).classList.add('win');
     if (res !== 'T') $(res === 'P' ? 'sideP' : 'sideB').classList.add('won');
     $('last').textContent = Math.max(0, net);
-    const name = { P: 'Player', B: 'Banker', T: 'Tie' }[res];
+    const name = LB.t(res === 'P' ? 'player' : 'banker');
+    const v = { name, p, b, net };
     if (net > 0) {
-      setMsg(`${name} wins ${p}–${b} · +${net}`, 'win');
+      setMsg(LB.t(res === 'T' ? 'tie_win' : 'bac_win', v), 'win');
       (res === 'T' && bets.T) ? LB.sfx.big() : LB.sfx.win();
       LB.burstAt($('spot' + res), res === 'T' ? 90 : 50, res === 'T' ? 1.3 : 1);
-    } else if (net === 0) { setMsg(`${name} ${res === 'T' ? '' : 'wins '}${p}–${b} · even`); LB.sfx.push(); }
-    else { setMsg(`${name} wins ${p}–${b}`, 'lose'); LB.sfx.lose(); }
+    } else if (net === 0) { setMsg(LB.t(res === 'T' ? 'tie_even' : 'bac_even', v)); LB.sfx.push(); }
+    else { setMsg(LB.t(res === 'T' ? 'tie_lose' : 'bac_lose', v), 'lose'); LB.sfx.lose(); }
     renderRoad(); updateUI();
   }
 

@@ -111,34 +111,35 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 <body data-page="block-puzzle">
 <div class="wrap">
   <header class="topbar">
-    <a class="home-link" href="./">&larr; Games</a>
-    <h1>Block Puzzle</h1>
+    <a class="home-link" href="./" data-i18n="back_games">&larr; Games</a>
+    <h1 data-i18n="t_bp">Block Puzzle</h1>
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
   </header>
 
   <div class="scores" aria-live="polite">
-    <div class="score"><span class="label">Score</span><span class="num" id="score">0</span></div>
-    <div class="score"><span class="label">Best</span><span class="num" id="best">0</span></div>
+    <div class="score"><span class="label" data-i18n="score">Score</span><span class="num" id="score">0</span></div>
+    <div class="score"><span class="label" data-i18n="best">Best</span><span class="num" id="best">0</span></div>
   </div>
 
   <div class="board-wrap" id="boardWrap">
-    <div class="board" id="board" aria-label="8 by 8 puzzle board"></div>
+    <div class="board" id="board" aria-label="8 by 8 puzzle board" data-i18n-aria="bp_board"></div>
     <div class="over" id="over" hidden>
-      <h2>No more moves</h2>
+      <h2 data-i18n="no_moves">No more moves</h2>
       <p id="overText">Score 0</p>
-      <button class="btn" id="again">Play again</button>
+      <button class="btn" id="again" data-i18n="play_again">Play again</button>
     </div>
   </div>
 
-  <div class="tray" id="tray" aria-label="Pieces to place"></div>
-  <div class="bar"><button class="tool" id="restart">New game</button></div>
-  <p class="hint">Drag a piece onto the board, or tap a piece and then tap a square. Fill a whole row or column to clear it.</p>
+  <div class="tray" id="tray" aria-label="Pieces to place" data-i18n-aria="bp_tray"></div>
+  <div class="bar"><button class="tool" id="restart" data-i18n="new_game">New game</button><span id="langSlot"></span></div>
+  <p class="hint" data-i18n="bp_hint">Drag a piece onto the board, or tap a piece and then tap a square. Fill a whole row or column to clear it.</p>
 </div>
 
 <script src="common.js"></script>
 <script>
 (() => {
   const N = 8;
+  document.title = `${LB.t('site_name')} · ${LB.t('t_bp')}`;
   const $ = id => document.getElementById(id);
   const COLORS = ['#ff5ea8', '#ff9a3d', '#ffd23f', '#5cf2a3', '#4fc3ff', '#b77bff', '#ff4d5e', '#3ee0d0'];
   // shapes as [row, col] lists; weight = how often they appear
@@ -227,7 +228,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
   function renderScore(bump) {
     $('score').textContent = score; $('best').textContent = best;
     if (bump) { const s = $('score'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump'); }
-    $('sound').textContent = LB.soundOn ? 'Sound on' : 'Sound off';
+    $('sound').textContent = LB.t(LB.soundOn ? 'sound_on' : 'sound_off');
   }
   function save() { LB.set('bp_state', { board, pieces, score, combo }); LB.set('bp_best', best); }
 
@@ -277,11 +278,11 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
       const mid = cells[[...hit][Math.floor(hit.size / 2)]];
       LB.burstAt(mid, 20 + lines * 20, 1 + lines * .15);
       LB.sfx.clear(lines);
-      toast(combo > 1 ? `Combo ×${combo}  +${gained}` : lines > 1 ? `${lines} lines! +${gained}` : `+${gained}`);
+      toast(combo > 1 ? LB.t('bp_combo', { c: combo, g: gained }) : lines > 1 ? LB.t('bp_lines', { n: lines, g: gained }) : `+${gained}`);
       setTimeout(() => {
         hit.forEach(k => { board[Math.floor(k / N)][k % N] = null; });
         renderBoard();
-        if (board.every(row => row.every(v => !v))) { score += 300; toast('Board clear! +300'); LB.sfx.big(); renderScore(true); }
+        if (board.every(row => row.every(v => !v))) { score += 300; toast(LB.t('bp_clear')); LB.sfx.big(); renderScore(true); }
         afterMove();
       }, 300);
     } else { combo = 0; afterMove(); }
@@ -297,7 +298,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
   }
   function gameOver() {
     over = true;
-    $('overText').textContent = score >= best && score > 0 ? `New best: ${score}` : `Score ${score} · Best ${best}`;
+    $('overText').textContent = score >= best && score > 0 ? LB.t('bp_newbest', { s: score }) : LB.t('bp_score', { s: score, b: best });
     $('over').hidden = false; LB.sfx.lose();
     LB.set('bp_state', null);
   }

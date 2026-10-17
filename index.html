@@ -40,7 +40,7 @@ body {
   background-size: 300% 300%; animation: sky 18s ease-in-out infinite;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 22px 120px;
+  padding-block: 58px 80px;
 }
 @keyframes sky { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(rgba(255,255,255,.35) 1.5px, transparent 1.6px) 0 0 / 18px 18px; }
@@ -92,34 +92,36 @@ h1 .ch.jump { animation: jump .55s cubic-bezier(.3,1.8,.5,1); }
 .tile:focus-visible { outline: 4px dashed #fff; outline-offset: 4px; }
 @keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg) scale(1.05); } 75% { transform: rotate(6deg) scale(1.05); } }
 .tile.slots { --c: #ff6b5e; } .tile.baccarat { --c: #3ee0b5; } .tile.blackjack { --c: #8fe04f; } .tile.puzzle { --c: #6fb8ff; }
-.sticker { position: absolute; top: -14px; right: -10px; padding: 6px 12px; border-radius: 12px; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 16px; letter-spacing: .03em; transform: rotate(8deg); box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
+.sticker { position: absolute; z-index: 3; top: -14px; right: -10px; padding: 6px 12px; border-radius: 12px; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 16px; letter-spacing: .03em; transform: rotate(8deg); box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
 .art { height: 118px; display: grid; place-items: center; }
 .art svg { height: 100%; width: auto; max-width: 100%; }
 .tile h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(24px, 5.4vw, 34px); line-height: 1; letter-spacing: .02em; color: #fff; -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--ink); }
 .tile p { margin: 0; font-size: 16px; line-height: 1.35; font-weight: 500; }
 .go { margin-top: auto; align-self: flex-start; font-family: var(--display); font-size: 18px; letter-spacing: .04em; padding: 8px 16px 6px; border-radius: 14px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 
+/* chasing marquee lights around each game square */
+.lights { position: absolute; inset: 7px; pointer-events: none; z-index: 2; }
+.bulb { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--b); border: 1.5px solid rgba(42,20,80,.55); opacity: .35; transform: scale(.75); animation: chase 1.4s linear infinite; animation-delay: var(--dl); }
+@keyframes chase { 0%, 100% { opacity: .3; transform: scale(.7); box-shadow: none; } 12% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 8px 3px var(--b), 0 0 2px #fff inset; } 30% { opacity: .55; transform: scale(.9); } }
+.tile:hover .bulb { animation-duration: .7s; }
 footer { text-align: center; font-weight: 600; font-size: 15px; }
 footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255,253,245,.85); border: 2px solid var(--ink); }
 
-/* stats badge (bottom right) */
+/* stats badge (bottom right): small sticker pill */
 .badge {
   position: fixed; z-index: 20;
-  right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  width: 104px; height: 104px; border-radius: 50%; text-decoration: none; color: var(--ink);
-  display: grid; place-items: center; text-align: center;
-  background: radial-gradient(circle at 35% 30%, #fff6c8, var(--sun) 60%, #f5a623);
-  border: 4px solid var(--ink); box-shadow: 4px 5px 0 var(--ink);
+  right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: 5px; height: 38px; padding: 0 11px 0 5px; border-radius: 999px;
+  text-decoration: none; color: var(--ink); font-family: var(--display); font-size: 15px; letter-spacing: .02em; line-height: 1;
+  background: var(--sun); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
   transition: transform .2s cubic-bezier(.3,1.6,.5,1);
 }
-.badge::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 3px dashed var(--ink); animation: spin 12s linear infinite; opacity: .55; }
-.badge:hover, .badge:focus-visible { transform: scale(1.1) rotate(-8deg); }
-.badge:focus-visible { outline: 4px dashed #fff; outline-offset: 4px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.badge .in { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1; }
-.badge svg { width: 30px; height: 30px; }
-.badge .count { font-family: var(--display); font-size: 19px; letter-spacing: .02em; }
-.badge .lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .02em; max-width: 64px; line-height: 1.05; }
+.badge svg { width: 26px; height: 26px; flex: none; animation: nod 3s ease-in-out infinite; }
+.badge .count:empty { display: none; }
+.badge:has(.count:empty) { padding-right: 5px; }
+.badge:hover, .badge:focus-visible { transform: scale(1.1) rotate(-6deg); }
+.badge:focus-visible { outline: 3px dashed #fff; outline-offset: 3px; }
+@keyframes nod { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
 
 @media (max-width: 520px) {
   .games { grid-template-columns: 1fr; gap: 18px; }
@@ -130,13 +132,10 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
   .go { display: none; }
   .hello { flex-direction: column; }
   .bubble::before { left: 50%; top: -16px; transform: translateX(-50%) rotate(135deg); }
-  .badge { width: 88px; height: 88px; }
-  .badge .count { font-size: 16px; }
-  .badge svg { width: 24px; height: 24px; }
 }
 @media (min-width: 521px) { .tile .txt { display: contents; } }
 @media (prefers-reduced-motion: reduce) {
-  body, h1 .ch, .doodle, .mascot, .mascot .arm, .badge::before, .tile:hover .art svg { animation: none !important; }
+  body, h1 .ch, .doodle, .mascot, .mascot .arm, .badge svg, .tile:hover .art svg, .bulb { animation: none !important; }
 }
 </style>
 </head>
@@ -145,12 +144,12 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
 
 <div class="wrap">
   <header>
-    <h1 id="title" aria-label="Play For Happy" title="Poke me"></h1>
-    <p class="ticker" id="ticker" aria-live="polite"><span>Warning: may cause uncontrollable giggling</span></p>
+    <h1 id="title" aria-label="Play For Happy" data-i18n-title="poke_me" title="Poke me"></h1>
+    <p class="ticker" id="ticker" aria-live="polite"><span data-i18n="joke1">Warning: may cause uncontrollable giggling</span></p>
   </header>
 
   <div class="hello">
-    <button class="mascot" id="mascot" aria-label="Poke the happy coin for a joke">
+    <button class="mascot" id="mascot" aria-label="Poke the happy coin for a joke" data-i18n-aria="mascot_aria">
       <svg viewBox="0 0 140 130" aria-hidden="true">
         <g class="arm"><path d="M30 70 Q8 56 12 34" fill="none" stroke="#2a1450" stroke-width="7" stroke-linecap="round"/><circle cx="12" cy="32" r="8" fill="#fff" stroke="#2a1450" stroke-width="4"/></g>
         <path d="M110 72 Q130 84 126 102" fill="none" stroke="#2a1450" stroke-width="7" stroke-linecap="round"/><circle cx="126" cy="104" r="8" fill="#fff" stroke="#2a1450" stroke-width="4"/>
@@ -165,45 +164,46 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
         <ellipse cx="42" cy="78" rx="7" ry="4" fill="#ff7aa8" opacity=".7"/><ellipse cx="98" cy="78" rx="7" ry="4" fill="#ff7aa8" opacity=".7"/>
       </svg>
     </button>
-    <div class="bubble" id="bubble">Hi! I'm Penny the Happy Coin. Pick a game and let's get silly!</div>
+    <div class="bubble" id="bubble" data-i18n="penny0">Hi! I'm Penny the Happy Coin. Pick a game and let's get silly!</div>
   </div>
 
   <ul class="games">
     <li><a class="tile slots" href="lobby.html?g=slots">
-      <span class="sticker">6 machines!</span>
-      <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="8" y="12" width="144" height="96" rx="18" fill="#ffd23f" stroke="#2a1450" stroke-width="5"/><rect x="20" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="62" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="104" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/><g font-family="Luckiest Guy, Impact, sans-serif" font-size="36" fill="#ff2d55" stroke="#2a1450" stroke-width="2" text-anchor="middle" paint-order="stroke"><text x="38" y="74">7</text><text x="80" y="74">7</text><text x="122" y="74">7</text></g><circle cx="152" cy="34" r="9" fill="#ff2d55" stroke="#2a1450" stroke-width="4"/><path d="M152 43 V70" stroke="#2a1450" stroke-width="5" stroke-linecap="round"/></svg></div>
-      <div class="txt"><h2>Slot Machines</h2><p>Spin it to win it. Pretend money, real giggles. Watch out for the monkey.</p></div>
-      <span class="go">Let's gooo!</span>
+      <span class="sticker" data-i18n="t_slots_s">6 machines!</span>
+      <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="8" y="12" width="144" height="96" rx="18" fill="#ffd23f" stroke="#2a1450" stroke-width="5"/><rect x="20" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="62" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="104" y="25" width="36" height="70" rx="7" fill="#fff" stroke="#2a1450" stroke-width="3"/>
+<g transform="translate(24 44)"><path d="M10 18C12 9 17 4 24 2M20 19C20 11 22 6 24 2" stroke="#3f6b25" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="9" cy="22" r="7" fill="#e0213a" stroke="#2a1450" stroke-width="2"/><circle cx="21" cy="23" r="7" fill="#e0213a" stroke="#2a1450" stroke-width="2"/></g>
+<g transform="translate(66 42)"><path d="M14 2c-7 0-11 6-11 13v7l-3 4h28l-3-4v-7C25 8 21 2 14 2z" fill="#ffc93c" stroke="#2a1450" stroke-width="2.4" stroke-linejoin="round"/><circle cx="14" cy="29" r="3.5" fill="#2a1450"/></g>
+<g transform="translate(108 46)"><path d="M3 8l5-7h12l5 7-11 19z" fill="#5ec8f2" stroke="#2a1450" stroke-width="2.4" stroke-linejoin="round"/><path d="M3 8h22M8 1l6 7 6-7M14 8v19" stroke="#1a5f8a" stroke-width="1.5" fill="none"/></g>
+<circle cx="152" cy="34" r="9" fill="#ff2d55" stroke="#2a1450" stroke-width="4"/><path d="M152 43 V70" stroke="#2a1450" stroke-width="5" stroke-linecap="round"/></svg></div>
+      <div class="txt"><h2 data-i18n="t_slots">Slot Machines</h2><p data-i18n="t_slots_d">Spin it to win it. Pretend money, real giggles. Watch out for the monkey.</p></div>
+      <span class="go" data-i18n="t_slots_go">Let's gooo!</span>
     </a></li>
     <li><a class="tile baccarat" href="lobby.html?g=baccarat">
-      <span class="sticker">4 tables!</span>
+      <span class="sticker" data-i18n="t_tables_s">4 tables!</span>
       <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><g transform="rotate(-14 60 64)"><rect x="28" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="38" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#ff2d55">9</text><path d="M56 62 q-10-10 0-16 q10 6 0 16z M56 62 q10-10 0-16" fill="#ff2d55"/><circle cx="56" cy="64" r="11" fill="#ff2d55"/></g><g transform="rotate(12 108 64)"><rect x="80" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="90" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#2a1450">K</text><circle cx="98" cy="64" r="5" fill="#2a1450"/><circle cx="118" cy="64" r="5" fill="#2a1450"/><path d="M96 76 q12 10 24 0" fill="none" stroke="#2a1450" stroke-width="4" stroke-linecap="round"/></g></svg></div>
-      <div class="txt"><h2>Baccarat</h2><p>Player? Banker? Tie? Pick one and pretend you know why.</p></div>
-      <span class="go">Deal me in!</span>
+      <div class="txt"><h2 data-i18n="t_bac">Baccarat</h2><p data-i18n="t_bac_d">Player? Banker? Tie? Pick one and pretend you know why.</p></div>
+      <span class="go" data-i18n="t_bac_go">Deal me in!</span>
     </a></li>
     <li><a class="tile blackjack" href="lobby.html?g=blackjack">
-      <span class="sticker">4 tables!</span>
+      <span class="sticker" data-i18n="t_tables_s">4 tables!</span>
       <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><g transform="rotate(-10 66 64)"><rect x="32" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="42" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#2a1450">A</text><path d="M60 52 l12 18 h-24z" fill="#2a1450"/></g><g transform="rotate(10 106 64)"><rect x="74" y="18" width="56" height="80" rx="9" fill="#fff" stroke="#2a1450" stroke-width="4"/><text x="84" y="44" font-family="Luckiest Guy, Impact, sans-serif" font-size="22" fill="#ff2d55">K</text><path d="M102 52 l10 12 l-10 12 l-10 -12z" fill="#ff2d55"/></g><rect x="48" y="92" width="64" height="26" rx="13" fill="#ffd23f" stroke="#2a1450" stroke-width="4"/><text x="80" y="112" text-anchor="middle" font-family="Luckiest Guy, Impact, sans-serif" font-size="18" fill="#2a1450">21!</text></svg></div>
-      <div class="txt"><h2>Blackjack</h2><p>Get to 21 without going kaboom. The dealer is a duck. Probably.</p></div>
-      <span class="go">Hit me!</span>
+      <div class="txt"><h2 data-i18n="t_bj">Blackjack</h2><p data-i18n="t_bj_d">Get to 21 without going kaboom. The dealer is a duck. Probably.</p></div>
+      <span class="go" data-i18n="t_bj_go">Hit me!</span>
     </a></li>
     <li><a class="tile puzzle" href="block-puzzle.html">
-      <span class="sticker">Addictive-ish</span>
+      <span class="sticker" data-i18n="t_bp_s">Addictive-ish</span>
       <div class="art"><svg viewBox="0 0 160 120" aria-hidden="true"><rect x="28" y="8" width="104" height="104" rx="14" fill="#2a1450" stroke="#2a1450" stroke-width="4"/><g stroke="#2a1450" stroke-width="3"><rect x="36" y="16" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="58" y="16" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="36" y="38" width="22" height="22" rx="5" fill="#ff5ea8"/><rect x="84" y="38" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="106" y="38" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="106" y="60" width="22" height="22" rx="5" fill="#4fc3ff"/><rect x="36" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="58" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="80" y="84" width="22" height="22" rx="5" fill="#ffd23f"/><rect x="102" y="84" width="22" height="22" rx="5" fill="#5cf2a3"/></g><circle cx="69" cy="27" r="3" fill="#2a1450"/><circle cx="47" cy="27" r="3" fill="#2a1450"/></svg></div>
-      <div class="txt"><h2>Block Puzzle</h2><p>Stuff blocks in, watch rows go poof. Very satisfying. Very.</p></div>
-      <span class="go">Stack 'em!</span>
+      <div class="txt"><h2 data-i18n="t_bp">Block Puzzle</h2><p data-i18n="t_bp_d">Stuff blocks in, watch rows go poof. Very satisfying. Very.</p></div>
+      <span class="go" data-i18n="t_bp_go">Stack 'em!</span>
     </a></li>
   </ul>
 
-  <footer><span>Pretend money only. Real smiles guaranteed.</span></footer>
+  <footer><span data-i18n="footer">Pretend money only. Real smiles guaranteed.</span></footer>
 </div>
 
-<a class="badge" href="stats.html" aria-label="Visitor stats">
-  <span class="in">
-    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#fff" stroke="#2a1450" stroke-width="3"/><circle cx="14" cy="16" r="2.6" fill="#2a1450"/><circle cx="26" cy="16" r="2.6" fill="#2a1450"/><path d="M11 23 Q20 33 29 23" fill="none" stroke="#2a1450" stroke-width="3" stroke-linecap="round"/></svg>
-    <span class="count" id="badgeCount">Stats</span>
-    <span class="lbl" id="badgeLbl">see who's playing</span>
-  </span>
+<a class="badge" href="stats.html" aria-label="Visitor stats" data-i18n-aria="badge_aria">
+  <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#fff" stroke="#2a1450" stroke-width="3"/><circle cx="14" cy="16" r="2.6" fill="#2a1450"/><circle cx="26" cy="16" r="2.6" fill="#2a1450"/><path d="M11 23 Q20 33 29 23" fill="none" stroke="#2a1450" stroke-width="3" stroke-linecap="round"/></svg>
+  <span class="count" id="badgeCount"></span>
 </a>
 
 <script src="common.js"></script>
@@ -213,7 +213,9 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
   const COLS = ['#ff2d55', '#ff9a3d', '#ffd23f', '#5cf2a3', '#4fc3ff', '#9b5cff', '#ff5ea8'];
   const title = document.getElementById('title');
   let i = 0;
-  title.innerHTML = 'Play For Happy'.split(' ').map(w => `<span class="word" aria-hidden="true">${[...w].map(ch => `<span class="ch" style="--c:${COLS[i % COLS.length]};--i:${i++}">${ch}</span>`).join('')}</span>`).join(' ');
+  title.setAttribute('aria-label', LB.t('site_name'));
+  document.title = LB.t('site_name');
+  title.innerHTML = LB.t('site_name').split(' ').map(w => `<span class="word" aria-hidden="true">${[...w].map(ch => `<span class="ch" style="--c:${COLS[i % COLS.length]};--i:${i++}">${ch}</span>`).join('')}</span>`).join(' ');
   title.addEventListener('click', e => {
     const ch = e.target.closest('.ch');
     const list = ch ? [ch] : [...title.querySelectorAll('.ch')];
@@ -223,33 +225,13 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
   });
 
   // joke ticker
-  const JOKES = [
-    'Warning: may cause uncontrollable giggling',
-    '100% fun. 0% real money. 1000% silly.',
-    'Side effects include spontaneous high-fives',
-    'Certified grumpiness remover',
-    'Your boss thinks you are in a meeting',
-    'Scientists agree: winning pretend money feels great',
-    'No ducks were harmed in the making of blackjack',
-    'Free refills. Of credits. Not soda.',
-    'Tip: the monkey is very generous. Sometimes.'
-  ];
+  const JOKES = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => LB.t('joke' + n));
   const ticker = document.getElementById('ticker');
   let j = 0;
   setInterval(() => { j = (j + 1) % JOKES.length; ticker.innerHTML = `<span>${JOKES[j]}</span>`; }, 3200);
 
   // mascot
-  const LINES = [
-    'Why did the coin go to school? To get a little more cents!',
-    'Poke me again. I dare you. Hee hee!',
-    'I would lend you money, but I am just one coin.',
-    'Fun fact: block puzzles are 87% more fun at 2 a.m.',
-    'Psst... the Golden Banana VIP table has fancy bananas.',
-    'I tried blackjack once. I flipped. Get it? Coin? Flip?',
-    'Today feels lucky. Yesterday also felt lucky. I am a lucky coin.',
-    'Remember: it is pretend money, so be brave!',
-    'Boing! That tickles!'
-  ];
+  const LINES = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => LB.t('penny' + n));
   let k = -1;
   const bubble = document.getElementById('bubble');
   document.getElementById('mascot').addEventListener('click', e => {
@@ -283,9 +265,39 @@ footer span { display: inline-block; padding: 6px 14px; border-radius: 999px; ba
   fetch('api/count', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => {
     if (j && typeof j.visitors === 'number') {
       document.getElementById('badgeCount').textContent = j.visitors.toLocaleString();
-      document.getElementById('badgeLbl').textContent = j.visitors === 1 ? 'happy player' : 'happy players';
+      document.querySelector('.badge').title = `${j.visitors.toLocaleString()} ${LB.t(j.visitors === 1 ? 'badge_player' : 'badge_players')}`;
     }
   }).catch(() => {});
+
+  // chasing lights around every game square
+  const BULB_COLORS = ['#ff2d55', '#ff9a3d', '#ffd23f', '#5cf2a3', '#4fc3ff', '#9b5cff', '#ff5ea8'];
+  function lightUp() {
+    document.querySelectorAll('.tile').forEach((tile, ti) => {
+      let layer = tile.querySelector('.lights');
+      if (!layer) { layer = document.createElement('span'); layer.className = 'lights'; layer.setAttribute('aria-hidden', 'true'); tile.appendChild(layer); }
+      layer.innerHTML = '';
+      const W = layer.clientWidth, H = layer.clientHeight, rad = 18, gap = 19;
+      // walk the rounded rectangle and drop a bulb every `gap` pixels
+      const segs = [];
+      const line = (x1, y1, x2, y2) => segs.push(t => [x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, Math.hypot(x2 - x1, y2 - y1)]);
+      const arc = (cx, cy, a0) => segs.push(t => { const a = a0 + t * Math.PI / 2; return [cx + rad * Math.cos(a), cy + rad * Math.sin(a), rad * Math.PI / 2]; });
+      line(rad, 0, W - rad, 0); arc(W - rad, rad, -Math.PI / 2); line(W, rad, W, H - rad); arc(W - rad, H - rad, 0);
+      line(W - rad, H, rad, H); arc(rad, H - rad, Math.PI / 2); line(0, H - rad, 0, rad); arc(rad, rad, Math.PI);
+      const lens = segs.map(f => f(0)[2]), total = lens.reduce((a, b) => a + b, 0);
+      const n = Math.max(12, Math.round(total / gap));
+      for (let i = 0; i < n; i++) {
+        let d = i * total / n, k = 0;
+        while (d > lens[k]) { d -= lens[k]; k++; }
+        const [x, y] = segs[k](d / lens[k]);
+        const b = document.createElement('i'); b.className = 'bulb';
+        b.style.cssText = `left:${x}px;top:${y}px;--b:${BULB_COLORS[(i + ti * 2) % BULB_COLORS.length]};--dl:${(-1.4 + (i / n) * 1.4 * 3) % 1.4}s`;
+        layer.appendChild(b);
+      }
+    });
+  }
+  lightUp();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(lightUp, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(lightUp);
 
   // welcome confetti
   setTimeout(() => LB.burstAt(title, 50, 1), 500);
