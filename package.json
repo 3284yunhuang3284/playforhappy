@@ -1,7 +1,7 @@
 {
-  "name": "lucky-brass-slots",
+  "name": "play-for-happy",
   "version": "1.0.0",
-  "description": "Lucky Brass slot machine web app (play credits only)",
+  "description": "Play For Happy game site (play credits only)",
   "private": true,
   "scripts": {
     "start": "node server.js"

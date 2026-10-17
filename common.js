@@ -2,6 +2,35 @@
 (function () {
   const LB = (window.LB = window.LB || {});
 
+  // ---------- tables & machines (shared by the lobbies and the games) ----------
+  LB.TABLES = {
+    slots: [
+      { id: 1, name: 'Cherry Bomb', joke: 'Explosively fruity. Mostly cherries.', a: '#ff7a5c', b: '#e0062c' },
+      { id: 2, name: 'Ocean Party', joke: 'The fish brought snacks.', a: '#4fd2ff', b: '#1a4fd6' },
+      { id: 3, name: 'Jungle Banana', joke: 'A monkey runs this one. Seriously.', a: '#8ee04f', b: '#1f8a3a' },
+      { id: 4, name: 'Bubblegum Blast', joke: 'Do not chew the reels.', a: '#ff9fd6', b: '#e0399a' },
+      { id: 5, name: 'Disco Llama', joke: 'The llama has moves. You have spins.', a: '#c58bff', b: '#5b22c9' },
+      { id: 6, name: 'Sunny Taco', joke: 'Extra cheese, extra spins.', a: '#ffd23f', b: '#ff7a1a' }
+    ],
+    baccarat: [
+      { id: 1, name: 'Sunny Side', joke: 'Easy bets, sunny vibes.', a: '#17907a', b: '#062f38', chips: [10, 25, 50, 100] },
+      { id: 2, name: 'Coconut Club', joke: 'Bring your own straw.', a: '#2a8fe6', b: '#0b2a55', chips: [10, 25, 50, 100] },
+      { id: 3, name: 'High Roller Hut', joke: 'The chairs are taller here.', a: '#a43ae0', b: '#2a0b45', chips: [25, 50, 100, 250] },
+      { id: 4, name: 'Golden Banana VIP', joke: 'Velvet rope made of bananas.', a: '#d79a1c', b: '#3d2400', chips: [50, 100, 250, 500] }
+    ],
+    blackjack: [
+      { id: 1, name: 'Lucky Duck', joke: 'Quack your way to 21.', a: '#2f9a52', b: '#0c3a20', chips: [10, 25, 50, 100] },
+      { id: 2, name: 'Jolly Jellyfish', joke: 'Wobbly dealer, steady cards.', a: '#1aa6b8', b: '#073a4a', chips: [10, 25, 50, 100] },
+      { id: 3, name: 'Disco Dino', joke: 'Hit me! said the T-Rex.', a: '#d23a8a', b: '#3d0a2a', chips: [25, 50, 100, 250] },
+      { id: 4, name: 'Royal Pancake VIP', joke: 'Stacks on stacks.', a: '#c98a12', b: '#3d2400', chips: [50, 100, 250, 500] }
+    ]
+  };
+  LB.pick = (game, param) => {
+    const list = LB.TABLES[game];
+    const n = parseInt(new URLSearchParams(location.search).get(param), 10);
+    return list.find(t => t.id === n) || list[0];
+  };
+
   // ---------- storage helpers ----------
   LB.get = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
   LB.set = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
@@ -17,7 +46,12 @@
     fetch('api/hit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vid, page }),
+      body: JSON.stringify({
+        vid, page,
+        ref: document.referrer || '',
+        tz: (Intl.DateTimeFormat().resolvedOptions().timeZone) || '',
+        lang: navigator.language || ''
+      }),
       keepalive: true
     }).catch(() => {});
   } catch {}

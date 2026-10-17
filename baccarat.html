@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lucky Brass Baccarat</title>
+<title>Play For Happy Baccarat</title>
 <meta name="theme-color" content="#0b4f5c">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -47,8 +47,8 @@
 <body data-page="baccarat">
 <div class="wrap">
   <header class="topbar">
-    <a class="home-link" href="./">&larr; Games</a>
-    <h1>Baccarat</h1>
+    <a class="home-link" href="lobby.html?g=baccarat">&larr; Tables</a>
+    <div class="ttl"><h1>Baccarat</h1><span class="tname" id="tname"></span></div>
     <button class="tool" id="sound" aria-pressed="true">Sound on</button>
   </header>
 
@@ -105,18 +105,27 @@
 <script>
 (() => {
   const $ = id => document.getElementById(id);
+  // which table (1–4): felt colors, chip values, name
+  const T = LB.pick('baccarat', 't');
+  document.documentElement.style.setProperty('--felt-a', T.a);
+  document.documentElement.style.setProperty('--felt-b', T.b);
+  $('tname').textContent = `Table ${T.id} · ${T.name}`;
+  document.title = `Play For Happy Baccarat · ${T.name}`;
+  document.querySelectorAll('.chip').forEach((c, i) => { c.dataset.v = T.chips[i]; c.textContent = T.chips[i]; });
+  const MIN = T.chips[0];
   const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 40 : ms));
   const START = 1000;
   let balance = LB.get('bac_credits', START);
   let bets = { P: 0, B: 0, T: 0 }, lastBets = LB.get('bac_last', null);
-  let chipV = 25, phase = 'bet';
+  let chipV = T.chips[1], phase = 'bet';
   let shoe = Cards.shoe(8);
-  let history = LB.get('bac_history', []);
+  const HKEY = T.id > 1 ? `bac_history_${T.id}` : 'bac_history';
+  let history = LB.get(HKEY, []);
   const val = c => (c.r === 'A' ? 1 : ('JQK'.includes(c.r) || c.r === '10') ? 0 : +c.r);
   const tot = cs => cs.reduce((a, c) => a + val(c), 0) % 10;
   const sum = o => o.P + o.B + o.T;
   function draw() { if (shoe.length < 20) shoe = Cards.shoe(8); return shoe.pop(); }
-  function save() { LB.set('bac_credits', balance); LB.set('bac_last', lastBets); LB.set('bac_history', history.slice(-90)); }
+  function save() { LB.set('bac_credits', balance); LB.set('bac_last', lastBets); LB.set(HKEY, history.slice(-90)); }
   function setMsg(t, cls = '') { const m = $('msg'); m.textContent = t; m.className = 'message ' + cls; }
 
   function renderRoad() {
@@ -137,7 +146,7 @@
     $('deal').hidden = !betting; $('deal').disabled = !sum(bets);
     $('rebet').hidden = !done || !lastBets; $('rebet').disabled = !lastBets || sum(lastBets) > balance;
     $('newbet').hidden = !done;
-    $('refill').hidden = !(betting && balance < 10 && !sum(bets));
+    $('refill').hidden = !(betting && balance < MIN && !sum(bets));
     $('sound').textContent = LB.soundOn ? 'Sound on' : 'Sound off';
   }
 

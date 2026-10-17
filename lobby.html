@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Play For Happy Tables</title>
+<meta name="theme-color" content="#ff9a3d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: lobby — back pill, big comic title with joke, grid of table/machine cards (3 across for slots, 2 for tables, 1 on phones). */
+:root {
+  --ink: #2a1450; --paper: #fffdf5; --sun: #ffd23f;
+  --display: "Luckiest Guy", "Fredoka", Impact, system-ui, sans-serif;
+  --body: "Fredoka", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html, body { min-height: 100%; }
+body {
+  margin: 0; color: var(--ink); font-family: var(--body);
+  background: linear-gradient(125deg, #ffe14d, #ffb03d 25%, #ff7aa8 50%, #8fd8ff 75%, #ffe14d); background-size: 300% 300%; animation: sky 18s ease-in-out infinite;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 40px;
+}
+@keyframes sky { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(rgba(255,255,255,.35) 1.5px, transparent 1.6px) 0 0 / 18px 18px; }
+.wrap { position: relative; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+.back { align-self: flex-start; padding: 8px 16px 6px; border-radius: 999px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 17px; letter-spacing: .03em; }
+.back:hover { transform: translateY(-2px); }
+header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(38px, 10vw, 76px); line-height: 1; color: #fff; -webkit-text-stroke: .05em var(--ink); paint-order: stroke fill; text-shadow: .06em .07em 0 var(--ink); text-wrap: balance; }
+.sub { margin: 0; display: inline-block; padding: 8px 18px; border-radius: 999px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-weight: 600; font-size: clamp(15px, 3.8vw, 18px); transform: rotate(-1deg); }
+.bank { font-weight: 700; font-size: 16px; }
+.bank b { font-family: var(--display); font-weight: 400; font-size: 20px; letter-spacing: .02em; }
+.grid { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 22px; list-style: none; margin: 0; padding: 0; }
+.card {
+  --a: #ff7a5c; --b: #e0062c;
+  position: relative; display: flex; flex-direction: column; gap: 10px; height: 100%; padding: 14px 14px 16px; border-radius: 24px;
+  background: var(--paper); border: 4px solid var(--ink); box-shadow: 6px 7px 0 var(--ink); color: var(--ink); text-decoration: none;
+  transition: transform .2s cubic-bezier(.3,1.6,.5,1), box-shadow .2s;
+}
+.grid li:nth-child(odd) .card { transform: rotate(-1deg); } .grid li:nth-child(even) .card { transform: rotate(1deg); }
+.card:hover, .card:focus-visible { transform: scale(1.04) translateY(-4px) rotate(0) !important; box-shadow: 9px 11px 0 var(--ink); }
+.card:focus-visible { outline: 4px dashed #fff; outline-offset: 4px; }
+.num { position: absolute; top: -14px; left: -10px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--sun); border: 3px solid var(--ink); font-family: var(--display); font-size: 20px; box-shadow: 2px 2px 0 var(--ink); }
+.preview { height: 130px; border-radius: 16px; border: 3px solid var(--ink); background: linear-gradient(160deg, var(--a), var(--b)); display: grid; place-items: center; overflow: hidden; position: relative; }
+.preview svg { height: 82%; width: auto; max-width: 92%; }
+.card:hover .preview svg { animation: jiggle .5s ease-in-out infinite; }
+@keyframes jiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-5deg) scale(1.05); } 75% { transform: rotate(5deg) scale(1.05); } }
+.card h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(22px, 5vw, 28px); line-height: 1; letter-spacing: .02em; }
+.card p { margin: 0; font-size: 15px; line-height: 1.35; font-weight: 500; }
+.meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+.limits { font-weight: 700; font-size: 14px; padding: 4px 10px; border-radius: 999px; background: color-mix(in srgb, var(--a) 25%, #fff); border: 2px solid var(--ink); }
+.sit { font-family: var(--display); font-size: 17px; letter-spacing: .04em; padding: 7px 14px 5px; border-radius: 12px; color: #fff; background: var(--b); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.missing { text-align: center; font-size: 18px; font-weight: 600; }
+@media (max-width: 560px) { .grid { grid-template-columns: 1fr; } .preview { height: 110px; } }
+@media (prefers-reduced-motion: reduce) { body, .card:hover .preview svg { animation: none !important; } }
+</style>
+</head>
+<body data-page="lobby">
+<div class="wrap">
+  <a class="back" href="./">&larr; Home</a>
+  <header>
+    <h1 id="title">Pick a table</h1>
+    <p class="sub" id="sub"></p>
+    <div class="bank" id="bank"></div>
+  </header>
+  <ul class="grid" id="grid"></ul>
+</div>
+<script src="common.js"></script>
+<script>
+(() => {
+  const g = new URLSearchParams(location.search).get('g');
+  const GAMES = {
+    slots: { title: 'Slot Machines', sub: 'Six machines. Zero real money. Infinite silliness.', page: 'slots.html', param: 'm', cols: 3, sit: 'Spin!' },
+    baccarat: { title: 'Baccarat', sub: 'Four tables. Pick the one with the snacks.', page: 'baccarat.html', param: 't', cols: 2, sit: 'Sit down!' },
+    blackjack: { title: 'Blackjack', sub: 'Four tables. The dealer promises not to quack.', page: 'blackjack.html', param: 't', cols: 2, sit: 'Sit down!' }
+  };
+  const G = GAMES[g];
+  const grid = document.getElementById('grid');
+  if (!G) {
+    document.getElementById('title').textContent = 'Oops!';
+    document.getElementById('sub').textContent = 'That game wandered off.';
+    grid.outerHTML = '<p class="missing"><a href="./">Go back home</a> and pick a game.</p>';
+    return;
+  }
+  document.title = `Play For Happy ${G.title}`;
+  document.getElementById('title').textContent = G.title;
+  document.getElementById('sub').textContent = G.sub;
+  grid.style.setProperty('--cols', G.cols);
+
+  const bankKey = { baccarat: 'bac_credits', blackjack: 'bj_credits' }[g];
+  if (bankKey) document.getElementById('bank').innerHTML = `Your chips: <b>${Math.round(LB.get(bankKey, 1000)).toLocaleString()}</b>`;
+
+  const slotArt = (a, b) => `<svg viewBox="0 0 120 100" aria-hidden="true"><rect x="6" y="6" width="108" height="88" rx="16" fill="#fffdf5" stroke="#2a1450" stroke-width="4"/><rect x="16" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="47" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><rect x="78" y="22" width="26" height="54" rx="5" fill="#fff" stroke="#2a1450" stroke-width="3"/><g font-family="Luckiest Guy, Impact, sans-serif" font-size="24" text-anchor="middle" fill="${b}" stroke="#2a1450" stroke-width="1.5" paint-order="stroke"><text x="29" y="58">7</text><text x="60" y="58">7</text><text x="91" y="58">7</text></g><rect x="30" y="80" width="60" height="9" rx="4.5" fill="${a}" stroke="#2a1450" stroke-width="2.5"/></svg>`;
+  const tableArt = () => `<svg viewBox="0 0 140 90" aria-hidden="true"><ellipse cx="70" cy="50" rx="64" ry="34" fill="rgba(0,0,0,.18)" stroke="#2a1450" stroke-width="3"/><ellipse cx="70" cy="50" rx="52" ry="24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="5 4"/><g transform="rotate(-10 58 44)"><rect x="44" y="22" width="26" height="36" rx="4" fill="#fff" stroke="#2a1450" stroke-width="2.5"/><text x="49" y="36" font-family="Luckiest Guy, Impact" font-size="11" fill="#ff2d55">A</text></g><g transform="rotate(10 84 44)"><rect x="70" y="22" width="26" height="36" rx="4" fill="#fff" stroke="#2a1450" stroke-width="2.5"/><text x="75" y="36" font-family="Luckiest Guy, Impact" font-size="11" fill="#2a1450">K</text></g><circle cx="34" cy="64" r="7" fill="#ffd23f" stroke="#2a1450" stroke-width="2.5"/><circle cx="106" cy="66" r="7" fill="#ff5ea8" stroke="#2a1450" stroke-width="2.5"/></svg>`;
+
+  grid.innerHTML = LB.TABLES[g].map(t => {
+    let limits;
+    if (g === 'slots') {
+      const key = (t.id > 1 ? `m${t.id}_` : '') + 'lb_credits';
+      limits = `Credits ${Math.round(LB.get(key, 1000)).toLocaleString()}`;
+    } else limits = `Chips ${t.chips[0]}–${t.chips[t.chips.length - 1]}`;
+    return `<li><a class="card" style="--a:${t.a};--b:${t.b}" href="${G.page}?${G.param}=${t.id}">
+      <span class="num">${t.id}</span>
+      <div class="preview">${g === 'slots' ? slotArt(t.a, t.b) : tableArt()}</div>
+      <h2>${t.name}</h2>
+      <p>${t.joke}</p>
+      <div class="meta"><span class="limits">${limits}</span><span class="sit">${G.sit}</span></div>
+    </a></li>`;
+  }).join('');
+})();
+</script>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
+</body>
+</html>

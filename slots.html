@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Lucky Brass">
+<meta name="apple-mobile-web-app-title" content="Play For Happy">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -18,7 +18,7 @@ body { margin: 0; font: 14px/1.4 system-ui, -apple-system, sans-serif; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
 </style>
-<title>Lucky Brass Slots</title>
+<title>Play For Happy Slots</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee+Inline&family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap">
@@ -76,7 +76,7 @@ body {
   width: 100%; max-width: 660px;
   background:
     linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,.06) 26%, transparent 40%),
-    linear-gradient(160deg, #ff7a5c 0%, #ff3b47 38%, #ff1a3a 70%, #e0062c 100%);
+    linear-gradient(160deg, var(--cab-a, #ff7a5c) 0%, color-mix(in srgb, var(--cab-a, #ff7a5c) 45%, var(--cab-b, #e0062c)) 45%, var(--cab-b, #e0062c) 100%);
   border-radius: 34px 34px 18px 18px;
   padding: 18px 18px 18px;
   display: flex; flex-direction: column; gap: 14px;
@@ -100,7 +100,7 @@ body {
 .bulb.on { background: var(--c); box-shadow: 0 0 10px 3px var(--c); }
 h1 {
   margin: 0; font-family: var(--display); font-weight: 400;
-  font-size: clamp(30px, 8.5vw, 54px); line-height: 1; letter-spacing: .02em;
+  font-size: clamp(22px, 6.4vw, 46px); line-height: 1; letter-spacing: .02em; white-space: nowrap;
   background: var(--rainbow); background-size: 200% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
   filter: drop-shadow(0 3px 0 #12062e) drop-shadow(0 0 16px rgba(255,94,168,.5));
@@ -278,7 +278,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
 </style>
 </head>
 <body data-page="slots">
-<a class="home-link" href="./">&larr; All games</a>
+<a class="home-link" href="lobby.html?g=slots">&larr; Machines</a>
 
 
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -288,8 +288,8 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
 <main class="cabinet" id="cabinet">
   <header class="marquee">
     <div class="bulbs" id="bulbs"></div>
-    <h1>Lucky Brass</h1>
-    <div class="sub">Line up symbols from the left reel</div>
+    <h1>Play For Happy</h1>
+    <div class="sub" id="machineName">Line up symbols from the left reel</div>
   </header>
 
   <div class="window" id="window">
@@ -353,6 +353,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   </section>
 </main>
 
+<script src="common.js"></script>
 <script>
 (() => {
   // ---------- symbols ----------
@@ -379,9 +380,17 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
   const symById = id => SYMS.find(s => s.id === id);
 
   // ---------- state ----------
+  // which machine (1–6): theme + its own saved credits and rewards
+  const MACHINE = LB.pick('slots', 'm');
+  const MP = MACHINE.id > 1 ? `m${MACHINE.id}_` : '';
+  const GLOBAL_KEYS = new Set(['lb_sound', 'lb_vol']);
+  document.documentElement.style.setProperty('--cab-a', MACHINE.a);
+  document.documentElement.style.setProperty('--cab-b', MACHINE.b);
+  document.getElementById('machineName').textContent = `Machine ${MACHINE.id} · ${MACHINE.name}`;
+  document.title = `Play For Happy · ${MACHINE.name}`;
   const store = {
-    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    get(k, d) { try { const v = localStorage.getItem((GLOBAL_KEYS.has(k) ? '' : MP) + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem((GLOBAL_KEYS.has(k) ? '' : MP) + k, JSON.stringify(v)); } catch {} }
   };
   let credits = store.get('lb_credits', 1000);
   let bet = store.get('lb_bet2', 1);
@@ -678,7 +687,7 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
     };
     if (!back) {
       emboss(() => { x.font = '58px Bungee, Impact, sans-serif'; x.fillText('7', 0, 6); });
-      emboss(() => { x.font = '11px Bungee, Impact, sans-serif'; arcText('LUCKY', 38, true); arcText('BRASS', 38, false); });
+      emboss(() => { x.font = '11px Bungee, Impact, sans-serif'; arcText('PLAY', 38, true); arcText('HAPPY', 38, false); });
     } else {
       emboss(() => {
         x.beginPath();
@@ -1068,7 +1077,6 @@ button:focus-visible { outline: 3px solid var(--gold-hi); outline-offset: 2px; }
 })();
 </script>
 
-<script src="common.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

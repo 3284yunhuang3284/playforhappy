@@ -1,9 +1,10 @@
-// Lucky Brass offline support.
+// Play For Happy offline support.
 // Change VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'lucky-brass-v2';
+const VERSION = 'play-for-happy-v3';
 const APP_FILES = [
   './',
   './index.html',
+  './lobby.html',
   './slots.html',
   './baccarat.html',
   './blackjack.html',

@@ -4,57 +4,70 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Lucky Brass Visitors</title>
+<title>Play For Happy Visitors</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: owner dashboard — key gate, then summary tiles, a 30-day bar chart, and plays per game. */
+/* Layout: owner dashboard — key gate, summary tiles, 30-day chart, then Games, Where visitors came from, Devices. */
 :root {
-  --bg: #f6f3fb; --panel: #ffffff; --ink: #1d1638; --muted: #6b6488; --line: #e4def0;
-  --accent: #7a1fd0; --accent2: #ff5ea8; --good: #12925a;
-  --block: "Bungee", Impact, system-ui, sans-serif; --util: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; --body: "Barlow", system-ui, sans-serif;
+  --bg: #fff8e6; --panel: #ffffff; --ink: #2a1450; --muted: #6f6290; --line: #efe4cf;
+  --accent: #7a1fd0; --accent2: #ff4f9a; --sun: #ffc93c;
+  --display: "Luckiest Guy", "Fredoka", Impact, system-ui, sans-serif; --body: "Fredoka", system-ui, sans-serif;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #120828; --panel: #1d1240; --ink: #f3efff; --muted: #b3a8d9; --line: #33275e; --accent: #b77bff; --accent2: #ff7ab8; --good: #5cf2a3; color-scheme: dark; } }
-:root[data-theme="dark"] { --bg: #120828; --panel: #1d1240; --ink: #f3efff; --muted: #b3a8d9; --line: #33275e; --accent: #b77bff; --accent2: #ff7ab8; --good: #5cf2a3; color-scheme: dark; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #160c33; --panel: #22154a; --ink: #f6f0ff; --muted: #b9addf; --line: #362a66; --accent: #b77bff; --accent2: #ff7ab8; --sun: #ffd65c; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #160c33; --panel: #22154a; --ink: #f6f0ff; --muted: #b9addf; --line: #362a66; --accent: #b77bff; --accent2: #ff7ab8; --sun: #ffd65c; color-scheme: dark; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
-.wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.wrap { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
 header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-h1 { margin: 0; font-family: var(--block); font-weight: 400; font-size: clamp(22px, 5vw, 30px); }
-a { color: var(--accent); }
-.panel { background: var(--panel); border-radius: 16px; padding: 16px; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
-.panel h2 { margin: 0 0 12px; font-family: var(--util); font-weight: 700; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(26px, 6vw, 38px); letter-spacing: .02em; color: var(--accent); }
+h1 small { display: block; font-family: var(--body); font-size: 14px; font-weight: 600; color: var(--muted); letter-spacing: .04em; }
+a { color: var(--accent); font-weight: 600; }
+.panel { background: var(--panel); border-radius: 18px; padding: 16px; box-shadow: 0 0 0 2px var(--line); min-width: 0; }
+.panel h2 { margin: 0 0 12px; font-family: var(--display); font-weight: 400; font-size: 20px; letter-spacing: .03em; }
+.panel h3 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .gate { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.gate input { flex: 1 1 220px; min-width: 0; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 16px var(--body); }
-button { padding: 11px 18px; border-radius: 10px; border: none; background: var(--accent); color: #fff; font: 600 15px var(--body); cursor: pointer; }
-button.ghost { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--line); }
-button:focus-visible, input:focus-visible { outline: 3px solid var(--accent2); outline-offset: 2px; }
+.gate input { flex: 1 1 220px; min-width: 0; padding: 11px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); font: 16px var(--body); }
+button { padding: 11px 18px; border-radius: 12px; border: none; background: var(--accent); color: #fff; font: 600 15px var(--body); cursor: pointer; }
+button.ghost { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 2px var(--line); }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--accent2); outline-offset: 2px; }
 .err { color: #d0142c; font-size: 14px; margin: 8px 0 0; }
 .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.tile { background: var(--panel); border-radius: 14px; padding: 14px; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 4px; }
-.tile .k { font-family: var(--util); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.tile .v { font-family: var(--block); font-size: clamp(22px, 5vw, 32px); font-variant-numeric: tabular-nums; }
+.tile { background: var(--panel); border-radius: 16px; padding: 14px; box-shadow: 0 0 0 2px var(--line); display: flex; flex-direction: column; gap: 4px; }
+.tile .k { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font-family: var(--display); font-size: clamp(26px, 6vw, 36px); line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
 .tile .s { font-size: 13px; color: var(--muted); }
-.chart { overflow-x: auto; }
 .chart svg { display: block; width: 100%; height: auto; }
 .legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); margin-top: 8px; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; background: var(--c); vertical-align: -1px; }
-.games { display: flex; flex-direction: column; gap: 10px; }
-.grow { display: grid; grid-template-columns: 110px 1fr 70px; gap: 10px; align-items: center; font-size: 15px; }
-.bar { height: 14px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.cols.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.list { display: flex; flex-direction: column; gap: 9px; }
+.grow { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 15px; }
+.grow .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
 .bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-.grow .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.grow .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; min-width: 3.5em; }
+.grow .n small { font-weight: 500; color: var(--muted); }
+table.games { width: 100%; border-collapse: collapse; font-size: 15px; }
+.games th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 2px solid var(--line); }
+.games td { padding: 9px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.games td.num, .games th.num { text-align: right; }
+.games td .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: var(--c); }
+.table-scroll { overflow-x: auto; }
+.empty { color: var(--muted); font-size: 14px; margin: 0; }
 .note { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
-@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grow { grid-template-columns: 90px 1fr 56px; } }
+@media (max-width: 760px) { .cols, .cols.three { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Visitors</h1>
+    <h1>Play For Happy<small>Visitor stats · owner only</small></h1>
     <a href="./">Back to games</a>
   </header>
 
@@ -70,19 +83,44 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent2); o
   <div id="stats" hidden>
     <div class="tiles">
       <div class="tile"><span class="k">Visitors today</span><span class="v" id="tVis">0</span><span class="s" id="tNew"></span></div>
-      <div class="tile"><span class="k">Visits today</span><span class="v" id="tHits">0</span><span class="s">page views</span></div>
+      <div class="tile"><span class="k">Page views today</span><span class="v" id="tHits">0</span><span class="s">pages opened</span></div>
       <div class="tile"><span class="k">Last 7 days</span><span class="v" id="wVis">0</span><span class="s" id="wHits"></span></div>
       <div class="tile"><span class="k">All time</span><span class="v" id="aVis">0</span><span class="s" id="aHits"></span></div>
     </div>
+
     <section class="panel" style="margin-top:18px">
       <h2>Last 30 days</h2>
       <div class="chart" id="chart"></div>
       <div class="legend"><span style="--c: var(--accent)">Visitors</span><span style="--c: var(--accent2)">Page views</span></div>
     </section>
+
     <section class="panel" style="margin-top:18px">
-      <h2>Page views by game (all time)</h2>
-      <div class="games" id="games"></div>
+      <h2>Games</h2>
+      <div class="table-scroll">
+        <table class="games">
+          <thead><tr><th>Game</th><th class="num">Players</th><th class="num">Page views</th><th class="num">Today</th></tr></thead>
+          <tbody id="games"></tbody>
+        </table>
+      </div>
     </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Where visitors came from</h2>
+      <div class="cols">
+        <div><h3>Arrived from</h3><div class="list" id="sources"></div></div>
+        <div><h3>Country / region</h3><div class="list" id="places"></div></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px">
+      <h2>Devices</h2>
+      <div class="cols three">
+        <div><h3>Device type</h3><div class="list" id="devices"></div></div>
+        <div><h3>System</h3><div class="list" id="os"></div></div>
+        <div><h3>Browser</h3><div class="list" id="browsers"></div></div>
+      </div>
+    </section>
+
     <p class="note" id="since" style="margin-top:14px"></p>
     <div style="margin-top:10px"><button class="ghost" id="logout">Forget key on this device</button></div>
   </div>
@@ -90,10 +128,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent2); o
 <script>
 (() => {
   const $ = id => document.getElementById(id);
-  const NAMES = { home: 'Menu', slots: 'Slots', baccarat: 'Baccarat', blackjack: 'Blackjack', 'block-puzzle': 'Block Puzzle', other: 'Other' };
-  const getKey = () => { try { return localStorage.getItem('lb_admin_key') || ''; } catch { return ''; } };
-  const setKey = k => { try { k ? localStorage.setItem('lb_admin_key', k) : localStorage.removeItem('lb_admin_key'); } catch {} };
-  const fmt = n => n.toLocaleString();
+  const NAMES = { home: 'Home page', lobby: 'Table lobbies', slots: 'Slot machines', baccarat: 'Baccarat', blackjack: 'Blackjack', 'block-puzzle': 'Block Puzzle', other: 'Other' };
+  const DOT = { home: '#ffc93c', lobby: '#b77bff', slots: '#ff4f5e', baccarat: '#17907a', blackjack: '#2f9a52', 'block-puzzle': '#4fa8ff', other: '#999' };
+  const getKey = () => { try { return localStorage.getItem('pfh_admin_key') || ''; } catch { return ''; } };
+  const setKey = k => { try { k ? localStorage.setItem('pfh_admin_key', k) : localStorage.removeItem('pfh_admin_key'); } catch {} };
+  const fmt = n => Number(n || 0).toLocaleString();
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
   async function load(key) {
     $('err').hidden = true;
@@ -107,22 +147,38 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent2); o
   }
   function showErr(t) { $('err').textContent = t; $('err').hidden = false; $('stats').hidden = true; $('gatePanel').hidden = false; }
 
+  function bars(el, obj, limit = 8) {
+    const entries = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
+    if (!entries.length) { el.innerHTML = '<p class="empty">Nothing yet.</p>'; return; }
+    const total = entries.reduce((a, e) => a + e[1], 0);
+    const shown = entries.slice(0, limit);
+    const rest = entries.slice(limit).reduce((a, e) => a + e[1], 0);
+    if (rest) shown.push(['Everything else', rest]);
+    const max = Math.max(...shown.map(e => e[1]));
+    el.innerHTML = shown.map(([k, v]) =>
+      `<div class="grow"><span class="nm" title="${esc(k)}">${esc(k)}</span><span class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></span><span class="n">${fmt(v)} <small>${Math.round(v / total * 100)}%</small></span></div>`).join('');
+  }
+
   function render(s) {
     $('gatePanel').hidden = true; $('stats').hidden = false;
     $('tVis').textContent = fmt(s.today.visitors);
-    $('tNew').textContent = `${fmt(s.today.newVisitors)} new`;
+    $('tNew').textContent = `${fmt(s.today.newVisitors)} new today`;
     $('tHits').textContent = fmt(s.today.visits);
     $('wVis').textContent = fmt(s.last7.visitors);
     $('wHits').textContent = `visitors · ${fmt(s.last7.visits)} page views`;
     $('aVis').textContent = fmt(s.uniqueVisitors);
     $('aHits').textContent = `visitors · ${fmt(s.totalVisits)} page views`;
-    $('since').textContent = `Counting since ${new Date(s.since).toLocaleDateString()} · days follow ${s.timezone} time · a visitor is one browser on one device.`;
+    $('since').textContent = `Counting since ${new Date(s.since).toLocaleDateString()} · days follow ${s.timezone} time · a visitor is one browser on one device. Source, region and device are recorded once, on each visitor's first visit.`;
     drawChart(s.days);
-    const entries = Object.entries(s.pages).sort((a, b) => b[1] - a[1]);
-    const max = Math.max(1, ...entries.map(e => e[1]));
-    $('games').innerHTML = entries.length ? entries.map(([k, v]) =>
-      `<div class="grow"><span>${NAMES[k] || k}</span><span class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></span><span class="n">${fmt(v)}</span></div>`).join('')
-      : '<p class="note">No visits recorded yet.</p>';
+    const games = (s.games || []);
+    $('games').innerHTML = games.length ? games.map(g =>
+      `<tr><td><span class="dot" style="--c:${DOT[g.page] || '#999'}"></span>${esc(NAMES[g.page] || g.page)}</td><td class="num">${fmt(g.visitors)}</td><td class="num">${fmt(g.views)}</td><td class="num">${fmt(g.today)}</td></tr>`).join('')
+      : '<tr><td colspan="4" class="empty">No visits recorded yet.</td></tr>';
+    bars($('sources'), s.sources);
+    bars($('places'), s.places);
+    bars($('devices'), s.devices, 4);
+    bars($('os'), s.os, 6);
+    bars($('browsers'), s.browsers, 6);
   }
 
   function drawChart(days) {

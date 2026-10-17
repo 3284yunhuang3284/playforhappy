@@ -102,3 +102,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold-hi); outli
   .chip { width: 52px; height: 52px; font-size: 14px; }
   .btn { min-width: 0; flex: 1 1 40%; padding: 12px 10px; }
 }
+
+.ttl { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.tname { font-family: var(--util); font-weight: 700; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-hi); text-align: center; line-height: 1.15; text-wrap: balance; max-width: 100%; }
+@media (max-width: 420px) { .tname { font-size: 12px; letter-spacing: .06em; } }
