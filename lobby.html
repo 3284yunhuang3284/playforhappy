@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Play For Happy Tables</title>
-<meta name="theme-color" content="#ff9a3d">
+<meta name="theme-color" content="#110724">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -24,24 +24,31 @@
 html, body { min-height: 100%; }
 body {
   margin: 0; color: var(--ink); font-family: var(--body);
-  background: linear-gradient(125deg, #ffe14d, #ffb03d 25%, #ff7aa8 50%, #8fd8ff 75%, #ffe14d); background-size: 300% 300%; animation: sky 18s ease-in-out infinite;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255,61,139,.30), transparent 38%),
+    radial-gradient(circle at 88% 12%, rgba(79,195,255,.24), transparent 38%),
+    radial-gradient(circle at 82% 88%, rgba(255,210,63,.18), transparent 40%),
+    radial-gradient(circle at 14% 86%, rgba(155,92,255,.28), transparent 40%),
+    #110724;
+  background-attachment: fixed;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 40px;
 }
 @keyframes sky { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(rgba(255,255,255,.35) 1.5px, transparent 1.6px) 0 0 / 18px 18px; }
+body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(rgba(255,255,255,.07) 1.5px, transparent 1.6px) 0 0 / 18px 18px; }
 .wrap { position: relative; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 .back { align-self: flex-start; padding: 8px 16px 6px; border-radius: 999px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); color: var(--ink); text-decoration: none; font-family: var(--display); font-size: 17px; letter-spacing: .03em; }
 .back:hover { transform: translateY(-2px); }
 header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(38px, 10vw, 76px); line-height: 1; color: #fff; -webkit-text-stroke: .05em var(--ink); paint-order: stroke fill; text-shadow: .06em .07em 0 var(--ink); text-wrap: balance; }
 .sub { margin: 0; display: inline-block; padding: 8px 18px; border-radius: 999px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-weight: 600; font-size: clamp(15px, 3.8vw, 18px); transform: rotate(-1deg); }
-.bank { font-weight: 700; font-size: 16px; }
+.bank { font-weight: 700; font-size: 16px; color: #fff; }
+.bank b { color: var(--sun); }
 .bank b { font-family: var(--display); font-weight: 400; font-size: 20px; letter-spacing: .02em; }
 .grid { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 22px; list-style: none; margin: 0; padding: 0; }
 .card {
   --a: #ff7a5c; --b: #e0062c;
   position: relative; display: flex; flex-direction: column; gap: 10px; height: 100%; padding: 14px 14px 16px; border-radius: 24px;
-  background: var(--paper); border: 4px solid var(--ink); box-shadow: 6px 7px 0 var(--ink); color: var(--ink); text-decoration: none;
+  background: var(--paper); border: 4px solid var(--ink); box-shadow: 6px 7px 0 #000; color: var(--ink); text-decoration: none;
   transition: transform .2s cubic-bezier(.3,1.6,.5,1), box-shadow .2s;
 }
 .grid li:nth-child(odd) .card { transform: rotate(-1deg); } .grid li:nth-child(even) .card { transform: rotate(1deg); }
