@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Lucky Brass Visitors</title>
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: owner dashboard — key gate, then summary tiles, a 30-day bar chart, and plays per game. */
+:root {
+  --bg: #f6f3fb; --panel: #ffffff; --ink: #1d1638; --muted: #6b6488; --line: #e4def0;
+  --accent: #7a1fd0; --accent2: #ff5ea8; --good: #12925a;
+  --block: "Bungee", Impact, system-ui, sans-serif; --util: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif; --body: "Barlow", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #120828; --panel: #1d1240; --ink: #f3efff; --muted: #b3a8d9; --line: #33275e; --accent: #b77bff; --accent2: #ff7ab8; --good: #5cf2a3; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #120828; --panel: #1d1240; --ink: #f3efff; --muted: #b3a8d9; --line: #33275e; --accent: #b77bff; --accent2: #ff7ab8; --good: #5cf2a3; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 40px; }
+.wrap { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+h1 { margin: 0; font-family: var(--block); font-weight: 400; font-size: clamp(22px, 5vw, 30px); }
+a { color: var(--accent); }
+.panel { background: var(--panel); border-radius: 16px; padding: 16px; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+.panel h2 { margin: 0 0 12px; font-family: var(--util); font-weight: 700; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.gate { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.gate input { flex: 1 1 220px; min-width: 0; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 16px var(--body); }
+button { padding: 11px 18px; border-radius: 10px; border: none; background: var(--accent); color: #fff; font: 600 15px var(--body); cursor: pointer; }
+button.ghost { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--line); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent2); outline-offset: 2px; }
+.err { color: #d0142c; font-size: 14px; margin: 8px 0 0; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border-radius: 14px; padding: 14px; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 4px; }
+.tile .k { font-family: var(--util); font-weight: 600; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font-family: var(--block); font-size: clamp(22px, 5vw, 32px); font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 13px; color: var(--muted); }
+.chart { overflow-x: auto; }
+.chart svg { display: block; width: 100%; height: auto; }
+.legend { display: flex; gap: 16px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; background: var(--c); vertical-align: -1px; }
+.games { display: flex; flex-direction: column; gap: 10px; }
+.grow { display: grid; grid-template-columns: 110px 1fr 70px; gap: 10px; align-items: center; font-size: 15px; }
+.bar { height: 14px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.grow .n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.note { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+@media (max-width: 640px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grow { grid-template-columns: 90px 1fr 56px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Visitors</h1>
+    <a href="./">Back to games</a>
+  </header>
+
+  <section class="panel" id="gatePanel">
+    <h2>Owner access</h2>
+    <form class="gate" id="gate">
+      <input id="key" type="password" autocomplete="current-password" placeholder="Your ADMIN_KEY" aria-label="Admin key">
+      <button type="submit">Show stats</button>
+    </form>
+    <p class="err" id="err" hidden></p>
+  </section>
+
+  <div id="stats" hidden>
+    <div class="tiles">
+      <div class="tile"><span class="k">Visitors today</span><span class="v" id="tVis">0</span><span class="s" id="tNew"></span></div>
+      <div class="tile"><span class="k">Visits today</span><span class="v" id="tHits">0</span><span class="s">page views</span></div>
+      <div class="tile"><span class="k">Last 7 days</span><span class="v" id="wVis">0</span><span class="s" id="wHits"></span></div>
+      <div class="tile"><span class="k">All time</span><span class="v" id="aVis">0</span><span class="s" id="aHits"></span></div>
+    </div>
+    <section class="panel" style="margin-top:18px">
+      <h2>Last 30 days</h2>
+      <div class="chart" id="chart"></div>
+      <div class="legend"><span style="--c: var(--accent)">Visitors</span><span style="--c: var(--accent2)">Page views</span></div>
+    </section>
+    <section class="panel" style="margin-top:18px">
+      <h2>Page views by game (all time)</h2>
+      <div class="games" id="games"></div>
+    </section>
+    <p class="note" id="since" style="margin-top:14px"></p>
+    <div style="margin-top:10px"><button class="ghost" id="logout">Forget key on this device</button></div>
+  </div>
+</div>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const NAMES = { home: 'Menu', slots: 'Slots', baccarat: 'Baccarat', blackjack: 'Blackjack', 'block-puzzle': 'Block Puzzle', other: 'Other' };
+  const getKey = () => { try { return localStorage.getItem('lb_admin_key') || ''; } catch { return ''; } };
+  const setKey = k => { try { k ? localStorage.setItem('lb_admin_key', k) : localStorage.removeItem('lb_admin_key'); } catch {} };
+  const fmt = n => n.toLocaleString();
+
+  async function load(key) {
+    $('err').hidden = true;
+    let res;
+    try { res = await fetch('api/stats', { headers: { 'x-admin-key': key }, cache: 'no-store' }); }
+    catch { return showErr('Could not reach the server. Visitor stats need the site running with npm start.'); }
+    let body = {};
+    try { body = await res.json(); } catch {}
+    if (!res.ok) { if (res.status === 401) setKey(''); return showErr(body.error || 'The server did not return stats.'); }
+    setKey(key); render(body);
+  }
+  function showErr(t) { $('err').textContent = t; $('err').hidden = false; $('stats').hidden = true; $('gatePanel').hidden = false; }
+
+  function render(s) {
+    $('gatePanel').hidden = true; $('stats').hidden = false;
+    $('tVis').textContent = fmt(s.today.visitors);
+    $('tNew').textContent = `${fmt(s.today.newVisitors)} new`;
+    $('tHits').textContent = fmt(s.today.visits);
+    $('wVis').textContent = fmt(s.last7.visitors);
+    $('wHits').textContent = `visitors · ${fmt(s.last7.visits)} page views`;
+    $('aVis').textContent = fmt(s.uniqueVisitors);
+    $('aHits').textContent = `visitors · ${fmt(s.totalVisits)} page views`;
+    $('since').textContent = `Counting since ${new Date(s.since).toLocaleDateString()} · days follow ${s.timezone} time · a visitor is one browser on one device.`;
+    drawChart(s.days);
+    const entries = Object.entries(s.pages).sort((a, b) => b[1] - a[1]);
+    const max = Math.max(1, ...entries.map(e => e[1]));
+    $('games').innerHTML = entries.length ? entries.map(([k, v]) =>
+      `<div class="grow"><span>${NAMES[k] || k}</span><span class="bar"><i style="width:${(v / max * 100).toFixed(1)}%"></i></span><span class="n">${fmt(v)}</span></div>`).join('')
+      : '<p class="note">No visits recorded yet.</p>';
+  }
+
+  function drawChart(days) {
+    const W = 640, H = 220, L = 36, R = 8, T = 10, B = 28;
+    const max = Math.max(4, ...days.map(d => d.visits));
+    const raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / mag;
+    const step = Math.max(1, (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * mag);
+    const top = Math.ceil(max / step) * step;
+    const y = v => T + (H - T - B) * (1 - v / top);
+    const bw = (W - L - R) / days.length;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitors and page views per day for the last 30 days">`;
+    for (let v = 0; v <= top; v += step) {
+      svg += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/>`;
+      svg += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`;
+    }
+    days.forEach((d, i) => {
+      const x = L + i * bw;
+      svg += `<rect x="${x + bw * .12}" y="${y(d.visits)}" width="${bw * .76}" height="${y(0) - y(d.visits)}" rx="2" fill="var(--accent2)" opacity=".35"><title>${d.date}: ${d.visits} page views, ${d.visitors} visitors</title></rect>`;
+      svg += `<rect x="${x + bw * .26}" y="${y(d.visitors)}" width="${bw * .48}" height="${y(0) - y(d.visitors)}" rx="2" fill="var(--accent)"><title>${d.date}: ${d.visitors} visitors</title></rect>`;
+      if (i % 5 === 0 || i === days.length - 1) svg += `<text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" font-size="11" fill="var(--muted)">${d.date.slice(5)}</text>`;
+    });
+    svg += '</svg>';
+    $('chart').innerHTML = svg;
+  }
+
+  $('gate').addEventListener('submit', e => { e.preventDefault(); const k = $('key').value.trim(); if (k) load(k); });
+  $('logout').addEventListener('click', () => { setKey(''); $('stats').hidden = true; $('gatePanel').hidden = false; $('key').value = ''; });
+  const k = getKey(); if (k) load(k);
+})();
+</script>
+</body>
+</html>

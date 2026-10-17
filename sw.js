@@ -1,9 +1,16 @@
 // Lucky Brass offline support.
 // Change VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'lucky-brass-v1';
+const VERSION = 'lucky-brass-v2';
 const APP_FILES = [
   './',
   './index.html',
+  './slots.html',
+  './baccarat.html',
+  './blackjack.html',
+  './block-puzzle.html',
+  './common.js',
+  './cards.js',
+  './table.css',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -42,7 +49,7 @@ self.addEventListener('fetch', event => {
   }
 
   // The game's own files: network first so updates arrive, cache when offline
-  if (url.origin === location.origin) {
+  if (url.origin === location.origin && !url.pathname.includes('/api/') && !url.pathname.endsWith('stats.html')) {
     event.respondWith(
       fetch(req)
         .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return res; })

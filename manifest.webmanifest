@@ -1,7 +1,7 @@
 {
-  "name": "Lucky Brass Slots",
+  "name": "Lucky Brass Games",
   "short_name": "Lucky Brass",
-  "description": "A colorful 3–6 column slot machine played with free credits.",
+  "description": "Slots, baccarat, blackjack and a block puzzle, played with free credits.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,8 +9,21 @@
   "background_color": "#120828",
   "theme_color": "#e0062c",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
